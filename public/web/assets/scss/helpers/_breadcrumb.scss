@@ -1,0 +1,45 @@
+.breadcrumb-wrapper {
+  background-color: $color-gray;
+  border-bottom: 1px solid darken($color-gray, 5%);
+
+  .breadcrumb-white & {
+    background-color: #fff;
+  }
+
+  .btn {
+    margin-left: 15px;
+    margin-top: 11px;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }  
+}
+
+.breadcrumb {
+  background-color: transparent;
+  @include border-radius(0px);
+  font-size: 14px;
+  font-weight: 200;
+  margin: 0px;
+  padding: 20px 0px;
+
+  a {
+    color: $color-primary;
+  }
+
+  > li+li:before {
+    content: '\f101' !important;
+    color: $color-primary;
+    font-family: 'FontAwesome';
+    font-weight: normal !important;
+    @include opacity(.4);
+    padding: 0px 15px;
+  }
+
+  .active {
+    color: $color-primary;
+    font-style: italic;;
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,122 @@
+.vertical-tabs {
+  border: 1px solid rgba(black, .1);
+  border-bottom-width: 6px;
+  margin-bottom: 20px;
+
+  .nav {
+    padding: 0px;
+
+    li {            
+      @include background-image(none);
+      @include border-radius(0px);
+      margin-bottom: 0px;
+
+      a {
+        @extend .clearfix;
+
+        background-color: rgba(black, .02);
+        border: 0px;
+        border-bottom: 1px solid rgba(black, .1);
+        @include border-radius(0px);
+        color: $color-black;
+        padding-left: 10px;
+        text-align: left;
+        @include transition(background-color .2s linear);
+
+        &:before {
+          display: none;
+        }
+
+        img {
+          display: block;
+          float: left;
+          margin: 4px 15px 0px 0px;
+          width: 32px;
+        }
+
+        .title {
+          float: left;
+
+          strong, span {
+            display: block;
+          }
+
+          strong {
+            font-size: 14px;
+          }
+          span {
+            font-size: 12px;
+          }
+        }
+      }
+
+      &.active {
+        a {
+          background-color: #fff !important;
+          color: $color-secondary !important;
+        }
+
+        &:hover {
+          a {
+            background-color: #fff !important;
+            color: $color-secondary !important;          
+          }
+        }
+      }
+
+      &.active, &:hover {
+        a {
+          border: 0px;
+          border-bottom: 1px solid rgba(black, .1);
+
+          &:hover {
+            border-bottom: 1px solid rgba(black, .1);
+          }
+        }
+      }
+
+      &:hover {
+        a {
+          background-color: $color-secondary;
+          border-right: 1px solid rgba(black, .1);
+          color: #fff !important;
+        }
+      }
+
+      &:last-child {
+        a {
+          border-bottom: 0px;
+
+          &:hover {
+            border-bottom: 0px;
+          }
+        }
+      }
+    }
+  }
+
+  .tabs-left {
+    border-right: 1px solid rgba(black, .1);
+  }
+
+  .tab-pane {
+    border: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-top: 15px;
+    position: relative;
+  }
+}
+
+.vertical-tab-left {
+  padding-left: 0px;
+}
+
+.vertical-tab-right {
+  padding-left: 0px;
+  padding-right: 0px;
+
+  .tab-content {
+      padding-left: 10px;
+  }
+}

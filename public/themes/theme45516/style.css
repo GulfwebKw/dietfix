@@ -1,0 +1,156 @@
+/*--
+
+	Theme Name: theme45516
+
+	Theme URI: http://template-help.com/
+
+	Description: A theme for Wordpress 3.5.x + from Template-Help.com Collection
+
+	Author: Template_Help.com
+
+	Author URL: http://www.Template-Help.com/
+
+	Template: CherryFramework
+
+	Version: 2.0
+
+	MotoPress Version: 1.0
+
+--*/
+
+@import url("main-style.css");
+
+.logo_h img{
+
+max-width: 350px;
+
+}
+
+.rtl .y-lang{
+
+float:left;
+
+}
+
+.y-lang{
+
+float:right;
+
+}
+
+.lang-item{
+
+display:inline;
+
+}
+
+.rtl #lang_choice_polylang-2{
+
+float:left !important;
+
+}
+
+.rtl #slider-wrapper {    direction: ltr;}
+
+.wpcf7-form .submit-wrap input {
+
+    margin-right: 10px;
+
+    border: 1px solid;
+
+    padding: 15px 30px 30px 30px;
+
+}
+
+.rtl .logo{
+
+float:right !important;
+
+}
+
+.rtl .nav__primary .sf-menu >li{
+
+float:right;
+
+}
+
+.nav__primary .sf-menu >li >a
+{
+    background: #b72e39 !important;
+    color: #ffffff !important;
+    padding: 12px 0 !important;
+    text-transform: none !important;
+    font-size: 18px !important;
+    font-family: serif !important;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+	font-family:Arial, Helvetica, sans-serif !important;
+}
+.nav__primary .sf-menu >li >a:hover
+{
+    background: #00a1a1 !important;
+}
+.nav__primary .sf-menu >li >a.active
+{
+    background: #00a1a1 !important;
+}
+.nav__primary .sf-menu >li { border-left:1px solid #ffffff !important;}
+.nav__primary .sf-menu >li.current-menu-item >a
+{
+color: #00A1A1 !important;
+}
+#lang_choice_polylang-2{
+
+width:75px;
+
+}
+
+.rtl .span6{
+
+float:right;
+
+}
+
+.nav__primary .sf-menu >li{
+
+border-top: none !important;
+
+    border-bottom: none !important;
+
+}
+.right_img{margin-top:75px;}
+.right_img img{height:30px}
+.header >.container{
+
+padding:40px 0px 1px;
+
+}
+
+
+
+#lang_choice_polylang-2{
+
+float:right;
+
+}
+
+#loginframe {
+
+    position: absolute;
+
+    background: #fff;
+
+    padding: 20px;
+
+    border-radius: 0 0 10px 10px;
+
+    border: 1px solid #ccc;
+
+    left: 587px;
+
+}
+.container
+{
+    margin-left: auto;
+    margin-right: auto;
+}

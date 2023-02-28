@@ -1,0 +1,207 @@
+label {
+	color: $color-black;
+	cursor: pointer;
+	font-weight: 500; 
+
+    .widget-boxed-secondary & {
+        color: #fff;
+    }
+}
+
+.form-control {    
+    -moz-osx-font-smoothing: grayscale;    
+    -webkit-font-smoothing: antialiased;
+	-webkit-appearance: none;
+	border-color: rgba(0, 0, 0, .15);
+	@include border-radius(0px);
+	@include box-shadow(none);
+	font-size: 16px;
+	height: 42px;
+	padding: 12px 10px;
+
+	&:active, &:focus {
+		border-color: $color-secondary;
+		@include box-shadow(0px 0px 12px 0px rgba(0, 0, 0, .15));
+		color: $color-black;
+	}
+
+	&.input-xs {
+		font-size: 14px;
+		height: 38px;
+		padding: 6px 12px;		
+	}
+
+}
+
+textarea.form-control.input-xs {
+    height: 80px;
+}
+
+select.form-control {
+	padding-top: 10px;
+}
+
+.select-wrapper {
+    cursor: pointer;
+    position: relative;
+
+    &:after {
+        background-color: #fff;
+        color: $color-black;
+        content: '\f078';
+        font-family: 'FontAwesome';
+        font-size: 12px;
+        position: absolute;
+        right: 10px;
+        text-align: right;
+        top: 13px;
+        width: 24px;
+        z-index: 2;
+    }
+
+    select::-ms-expand {
+        display: none;
+    }
+
+    select.form-control {
+        background-color: #fff;
+        @include background-image(none);
+        @include box-shadow(none);
+        cursor: pointer;
+        text-indent: 0.01px;
+        text-overflow: '';
+        -moz-appearance: none;
+        -webkit-appearance: none;
+    }
+
+    select.form-control[disabled] {
+        cursor: not-allowed;
+    }
+}
+
+.input-sm {
+  font-size: 14px;
+  height: 36px;
+}
+
+.price-range-wrapper {
+  margin-bottom: -9px !important;
+  padding: 0px 15px;
+  width: 240px;
+
+  .irs-single {
+    background-color: $color-primary;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .irs-max {
+    background-color: $color-secondary;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .irs-min {
+    background-color: $color-secondary;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.chosen-container {
+    width: 100% !important;
+}
+
+.chosen-container-single .chosen-single {
+    background-color: #fff;
+    @include background-image(none);
+    border: 1px solid rgba(black , .15);
+    @include border-radius(0px);
+    @include box-shadow(none);
+    color: rgba(black, .45);
+    font-family: $font-family;
+    font-size: 16px;
+    height: 42px;
+    line-height: 42px;
+    padding: 0px 0px 0px 10px;
+    position: relative;
+
+    span:after {
+        background-color: $color-terciary;
+        color: #fff;
+        content: '\f078';
+        display: block;
+        height: 42px;
+        font-family: 'FontAwesome';
+        font-size: 10px;       
+        position: absolute;
+        right: 0px;
+        text-align: center;
+        top: 0px;
+        width: 42px;
+
+        .widget-boxed-secondary & {
+            background-color: $color-black;
+        }
+    }
+
+    > div {
+        display: none;
+    }
+}
+
+.chosen-container-active.chosen-with-drop .chosen-single {
+    @include background-image(none);
+    @include box-shadow(none);
+
+    .google-map-filter & {
+        border-color: transparent;
+    }
+}
+
+.chosen-container-single .chosen-drop {
+    @include border-radius(0px);
+
+    .google-map-filter & {
+        border-color: transparent;
+    }    
+}
+
+.chosen-container .chosen-results li.active-result {
+    font-size: 14px;
+    padding: 10px 7px;
+    @include transition(background-color .2s linear);
+
+    &:nth-child(odd) {
+        background-color: rgba(black, .04);
+    }
+
+    &.result-selected {
+        background-color: $color-secondary;
+        color: #fff;
+    }
+
+    &.highlighted {
+        @include background-image(none);
+        background-color: rgba(black, .10);
+        color: $color-black;
+    }
+}
+
+.chosen-container-single .chosen-search {
+    position: relative;
+
+    input[type=text] {
+        background-image: none;
+        height: 32px;
+    }
+
+    &:after {
+        content: '\f002';
+        display: block;
+        font-family: 'FontAwesome';
+        position: absolute;
+        right: 10px;
+        top: 11px;
+    }
+}

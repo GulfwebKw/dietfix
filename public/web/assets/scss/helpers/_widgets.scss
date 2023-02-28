@@ -1,0 +1,151 @@
+.widget {
+	margin-bottom: 30px;
+
+    h3 {
+      color: $color-black;    
+      margin-bottom: 50px;
+      &:after {
+        background-color: $color-secondary;
+        content: '';
+        display: block;
+        height: 3px;   
+        margin-top: 15px;     
+        position: absolute;
+        width: 70px;
+      }
+    }
+
+	&.widget-boxed-dark h3 {
+		color: #fff;
+	}
+
+	.list-group {
+		margin-bottom: 0px;
+	}
+
+	#footer & {
+		margin-bottom: 30px;
+	}
+
+	.circle-image {
+		float: left;
+		margin: 0px 5px 10px 0px;
+	}
+
+	&.widget-boxed-dark {
+		.list-group-item {
+			border-bottom: 1px solid rgba(white, .1) !important;
+
+			&:hover {
+				border-bottom: 1px solid rgba(white, .1) !important;			
+			}
+
+			&:last-child {
+				border-bottom: 0px !important;
+			}
+		}
+	}
+
+	.list-group-item {
+		background-color: transparent;
+		border: 0px;
+		@include border-radius(0px);
+		border-bottom: 1px solid rgba(black, .1);
+		font-size: 14px;
+		margin: 0px;
+		padding-left: 0px;
+		padding-right: 0px;
+		@include transition(padding .2s linear);
+
+		&:first-child {
+			padding-top: 0px;
+		}
+
+		&:last-child {
+			border-bottom: 0px;
+		}
+
+		i {
+			margin-right: 10px;
+		}
+
+        img {
+            margin-right: 10px;
+        }
+
+		&:hover {
+			background-color: transparent;
+			border-bottom: 1px solid rgba(0, 0, 0, .1);
+			color: $color-secondary !important;
+			padding-left: 7px !important;
+
+			&:last-child {
+				border-bottom: 0px;
+			}
+
+			.badge {
+				color: $color-secondary !important;
+			}
+		}
+
+		.badge {
+			background-color: transparent;
+			@include border-radius(0px);
+			color: $color-black;
+			font-size: 12px;
+			font-weight: 500;
+			margin-top: 3px;
+			@include text-shadow(none);
+			@include transition(color .2s linear);
+		}
+	}
+
+  .list-group.clean {
+    .list-group-item {
+      border: 0px !important;
+    }
+  }
+}
+
+.footer-top-dark #footer, .widget-boxed-dark {
+	.list-group-item {
+		border-color: rgba(white, .1);
+		color: #fff;
+
+		.badge {
+			color: #fff;
+		}
+	}
+}
+
+.footer-top-gray #footer {
+  .list-group-item {
+    border-color: rgba(white, .1);
+
+    .badge {
+      color: $color-black;
+    }
+  }
+}
+
+.widget-boxed {
+	background-color: rgba(black, .03);
+	padding: 15px;
+}
+
+.widget-boxed-secondary {
+	background-color: $color-secondary;
+}
+
+.widget-boxed-dark {
+	background-color: $color-black;
+	color: #fff;
+}
+
+.sidebar {
+    .widget {
+        &:last-child {
+            margin-bottom: 0px;
+        }
+    }
+}

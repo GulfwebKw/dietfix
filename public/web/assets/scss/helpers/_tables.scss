@@ -1,0 +1,43 @@
+.table {
+	font-size: 16px; 
+
+	th {
+		border-bottom: 0px !important;
+		color: $color-primary;
+		font-weight: 500;
+		line-height: 26px !important;
+	}
+
+	td {
+		border-top: 1px solid rgba(black, .1) !important; 
+		line-height: 26px !important;
+	}
+
+	&.table-white {
+		th, td {
+			background-color: #fff;
+			border-top: 1px solid $color-gray;
+		}
+	}
+}
+
+.table-attributes {
+	tr {
+		td {
+			border-top: 0px !important;			
+			font-size: 14px;
+		}
+
+		&:nth-child(odd) {
+			td {
+				background-color: $color-gray;
+			}
+		}
+	}
+
+	.property {
+		color: lighten($color-black, 5%);
+		font-weight: 500;
+		padding-left: 20px;
+	}
+}

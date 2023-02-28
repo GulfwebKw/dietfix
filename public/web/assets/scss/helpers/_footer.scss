@@ -1,0 +1,155 @@
+.footer-top {
+  background-color: #fff;
+  padding: 30px 0px 0px 0px;
+
+  .form-control {
+    background-color: #464646;
+  }
+
+  .footer-top-dark & {
+    background-color: $color-primary;
+    color: #fff;
+
+    a {
+      color: #fff;
+
+      &:hover {
+        color: $color-secondary;
+        text-decoration: none !important;
+      }
+    }
+
+    h3 {
+      color: #fff;    
+    }
+  }
+
+
+  .footer-top-gray & {
+    background-color: #fafafa;
+  }
+
+  .nav-pills > li { 
+    &:first-child {
+      > a {
+        padding-left: 0px;
+      }
+    } 
+
+    > a {
+      @include border-radius(0px);
+      font-size: 14px;
+
+      &:hover {
+        background-color: transparent;
+        text-decoration: underline;
+      }
+    }
+
+    @media (max-width: 767px) {
+      border-bottom: 1px solid rgba(white, .1);
+      float: none;
+
+      > a {
+        padding-left: 0px;
+      }
+    }    
+  }
+}
+
+.footer-bottom {
+  background-color: $color-secondary;
+  color: #fff;
+  font-size: 14px;
+  line-height: 28px;
+  padding: 40px 0px 34px 0px;
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .footer-bottom-dark & {
+    background-color: $color-primary;
+    border: 0px;
+    color: #fff;
+  }
+
+  .footer-nav > li {
+    &:after {
+      background-color: rgba(white, .2);
+    }
+
+    > a {
+      color: #fff;
+    }
+  }
+
+  .copyright {
+    float: right;
+
+    @media (min-width: 767px) and (max-width: 992px) {
+      float: none;
+    }
+
+    @media (max-width: 767px) {
+      float: none;
+    }
+  }
+
+  nav {
+    float: left;
+
+    @media (min-width: 767px) and (max-width: 992px) {
+      border-bottom: 1px solid rgba(black, .1);
+      float: none;
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+    }
+
+    @media (max-width: 767px) {
+      float: none;
+      margin-bottom: 20px;
+
+      ul > li {
+        border-bottom: 1px solid rgba(black, .1);
+        float: none;
+        padding: 0px 0px;
+        width: 100%;
+        
+        &:hover a {
+          border-color: transparent !important;
+        }
+
+        a {
+          border-color: transparent !important;
+          display: block;
+          margin: 5px 10px;          
+
+          &:hover {
+            border-color: transparent !important;
+            margin: 5px 10px;  
+          }
+        }
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.navbar-nav.footer-nav {
+  margin: 0px !important;
+
+  a {
+    text-decoration: none;
+  }
+
+  li {
+    &:first-child {
+      padding-left: 0px;
+    }
+  }
+}

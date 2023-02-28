@@ -1,0 +1,29 @@
+.nav-tabs > li > a {
+	background-color: $color-gray;
+	color: $color-black !important;
+	font-size: 16px;
+	font-weight: 500;
+	margin: 0px;
+	padding: 15px 50px;
+	position: relative;
+	text-align: center;
+	@include transition(background-color .2s linear);
+}
+
+.nav-tabs > li.active > a {
+	color: $color-terciary !important;
+
+	&:before {
+		background-color: $color-terciary;
+		content: '';
+		height: 2px;
+		left: 0px;
+		position: absolute;
+		top: -1px;
+		width: 100%;
+	}	
+}
+
+.nav-tabs.three > li {
+	width: 33.33%;
+}

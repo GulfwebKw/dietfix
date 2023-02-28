@@ -1,0 +1,50 @@
+.content-row-small {
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0px;
+	}
+}
+
+.content-row-small-picture {
+	@extend %circled_picture;
+}
+
+.content-row-small-picture-standard {
+  img {
+    @include border-radius(0px);
+    max-width: 100%;
+  }
+}
+
+.footer-top-dark {
+	.content-row-small:hover .content-row-small-picture a span {
+		@include box-shadow(inset 0px 0px 0px 3px $color-secondary);
+	}
+}
+
+.content-row-small-body {
+	padding-left: 0px;
+
+	h4, h4 a { 
+		color: $color-secondary;
+		font-size: 14px;
+
+		&:hover {
+			color: $color-primary;
+			text-decoration: none;
+
+			.content-row-small & {
+				color: $color-secondary;
+			}
+		}
+	}
+
+	h4 {
+		margin: 0px 0px 5px 0px;
+	}
+}
+
+.content-row-small-meta {
+	font-size: 12px;
+}

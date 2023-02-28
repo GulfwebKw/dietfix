@@ -1,0 +1,11 @@
+.image-zoom {
+  img {
+    @include transition(all .2s linear);
+  }
+
+  &:hover {
+    img {
+      @include transform(scale(1.05));
+    }
+  }
+}

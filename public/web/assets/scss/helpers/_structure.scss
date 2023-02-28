@@ -1,0 +1,257 @@
+html {
+  height: 100%;  
+  width: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: #fff;
+  color: $color-black;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 300;
+  height: 100%;
+  min-height: 100%;    
+  width: 100%;
+
+  &.layout-boxed {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+::selection {
+  background: rgba($color-secondary, .2);
+}
+
+::-moz-selection {
+  background: rgba($color-secondary, .3);
+}
+
+a {
+  color: $color-secondary;
+  @include transition(color .2s linear);
+  
+  &:hover {
+    color: $color-secondary;
+  }
+
+  &:focus, &:active, &:hover {
+    outline: 0px;
+  }
+}
+
+hr {
+  border-top: 1px solid rgba(black, .1);
+  margin: 30px 0px;
+
+  .footer-top-dark & {
+    border-top: 1px solid rgba(white, .1);
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $color-primary;
+  margin: 0px 0px 20px 0px;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: 400;
+
+  @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 42px;
+  }
+}
+
+h2 {
+  font-size: 40px;
+  font-weight: 200;
+
+   @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 34px;
+  } 
+
+  @media (max-width: 767px) {
+    span.btn-group {
+      float: none !important;
+      width: 100%;
+    }
+  }
+}
+
+h3 {
+  font-size: 36px;
+  font-weight: 300;
+  margin-bottom: 36px;
+
+  @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 25px;
+  }  
+}
+
+h3 {
+  font-size: 30px;
+  font-weight: 500;
+
+  @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 26px;
+  }  
+}
+
+h5 {
+  font-size: 26px;
+  font-weight: 600;
+
+  @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 20px;
+  }  
+}
+
+h6 {
+  font-size: 20px;
+  font-weight: 600;
+
+  @media (min-width: 767px) and (max-width: 992px) {
+    font-size: 18px;
+  }  
+}
+
+#page {
+  background-color: #fff;
+  display: table;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+
+  .layout-boxed & {
+    @include box-shadow(0px 0px 10px rgba(0, 0, 0, .2));
+    margin: 0px auto;
+    width: auto;
+  }
+}
+
+#header-wrapper {
+  display: table-row;
+  height: 1px;
+}
+
+#main-wrapper {
+  display: table-row;
+  height: 100%;
+}
+
+#main {
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;  
+  display: table-cell;
+
+  &.promo-background {
+    background-image: url('../../assets/img/blur.jpg');
+  }
+}
+
+#main-inner {
+  .layout-boxed & {
+    overflow: hidden;
+  }
+}
+
+#footer-wrapper {
+  display: table-row;
+  height: 1px;
+}
+
+blockquote {
+  background-color: $color-gray;
+  border: 0px;
+  color: $color-black;
+  font-size: 28px;
+  line-height: 38px;
+  margin: 50px 0px;
+  padding: 40px 25px;
+  position: relative;
+  text-align: center;
+
+  &.black {
+    background-color: $color-black;
+    color: #fff;
+
+    &:after {
+      background-color: $color-primary;
+    }
+  }
+
+  &:before {
+    background-color: $color-secondary;
+    content: '\f10e';
+    color: #fff;
+    display: block;
+    font-family: 'FontAwesome';
+    height: 70px;
+    left: 50%;
+    line-height: 74px;
+    margin-left: -35px;
+    position: absolute;
+    top: -35px;
+    width: 70px;
+  }
+
+  &:after {
+    background-color: $color-secondary;
+    bottom: -8px;
+    content: '';
+    display: block;
+    height: 8px;
+    left: 50%;
+    margin-left: -15%;
+    position: absolute;
+    width: 30%;
+  }
+}
+
+.layout-landing {
+  .navbar-brand {
+    display: inline-block;
+    float: none;
+  } 
+
+  .navbar-header {
+    width: 100%;
+  }
+
+  .picture-moving {
+    border: 10px solid rgba(black, .05);     
+    margin-bottom: 30px;    
+    position: relative;
+
+    .image {
+      background-position: top center;
+      background-size: 100% auto;
+      display: block;
+      height: 350px;
+      overflow: hidden;
+      position: relative;
+      @include transition(all 1.5s  ease-out);
+    }
+
+    &:hover {
+      .image {
+        background-position: bottom center;
+      }
+    }
+
+    .description {
+      background-color: $color-secondary;
+      color: #fff;
+      display: block;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 10px 0px;
+      text-align: center;
+    }
+  }
+}

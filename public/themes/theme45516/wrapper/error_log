@@ -1,0 +1,10 @@
+[14-Jul-2016 22:59:11 Asia/Kuwait] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19
+[14-Jul-2016 22:59:18 Asia/Kuwait] PHP Fatal error:  Call to undefined function get_template_part() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-footer.php on line 7
+[17-Jul-2016 04:53:38 Asia/Kuwait] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19
+[11-Jun-2017 07:01:28 Asia/Kuwait] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19
+[12-Jun-2017 19:42:53 Asia/Kuwait] PHP Fatal error:  Call to undefined function get_template_part() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-footer.php on line 7
+[20-Aug-2017 10:25:51 Asia/Kuwait] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19
+[20-Aug-2017 10:29:38 Asia/Kuwait] PHP Fatal error:  Call to undefined function get_template_part() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-footer.php on line 7
+[20-Aug-2017 17:27:22 Asia/Kuwait] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19
+[28-Aug-2017 12:26:24 Asia/Kuwait] PHP Fatal error:  Call to undefined function get_template_part() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-footer.php on line 7
+[20-Oct-2017 19:39:33 UTC] PHP Fatal error:  Call to undefined function dynamic_sidebar() in /home/dietfix/public_html/wp-content/themes/theme45516/wrapper/wrapper-header.php on line 19

@@ -1,0 +1,81 @@
+.review {
+  @extend .clearfix;
+  @include border-radius(0px);
+  margin-bottom: 0px;
+  padding: 10px;
+  position: relative;
+  @include transition(background-color .2s linear);
+
+  &:hover {
+    background-color: rgba(black, .05);
+
+    .review-read-more {
+      color: $color-secondary;
+    }
+  }
+
+  &:last-child {
+    margin-bottom: 0px;
+  }
+}
+
+.review-image {
+  @include border-radius(0px);
+  float: left;
+  margin-right: 15px;
+  overflow: hidden;
+
+  img {
+    width: 70px;
+  }
+}
+
+.review-title {
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0px 0px 5px 0px;
+    padding: 3px 0px 0px 0px;
+
+    a {
+      color: $color-black;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 14px;
+    }
+  }
+
+  span {
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .raty {
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .rating {
+      bottom: -2px;
+      margin-right: 15px;
+      position: relative;
+  }
+}
+
+.review-read-more {
+  color: rgba(black, 0);
+  position: absolute;
+  right: 20px;
+  top: 22px;
+  @include transition(color .2s linear);
+
+  .fa {
+    font-size: 42px;
+  }
+
+  @media (max-width: 767px) {
+      display: none;
+  }
+}

@@ -1,0 +1,124 @@
+.background-gray .pricing {
+	@include box-shadow(0px 0px 30px rgba(0, 0, 0, .15));
+}
+
+.pricing-important {
+	@include transform(scale(1.1));
+	z-index: 999;
+
+	@media (max-width: 767px) {
+		@include transform(scale(1));
+	}
+}
+
+.pricing-col {
+	background-color: darken($color-gray, 2%);
+	border-bottom: 6px solid $color-primary;
+	padding: 30px 0px;
+	position: relative;
+	text-align: center;
+
+	@media (max-width: 767px) {
+		margin-bottom: 50px !important;
+	}
+
+	.background-gray & {
+		background-color: #fff;
+	}
+
+	.no-spacing & {
+		&:after {
+			background-color: transparent;
+			@include box-shadow(inset 0px 0px 15px rgba(0, 0, 0, .05));
+			content: '';
+			display: block;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			width: 100%;			
+		}		
+	}
+
+	&.pricing-secondary {
+		border-bottom-color: $color-secondary;
+
+		h2, h3, ul {
+			color: $color-secondary;
+		}
+
+		.price {
+			background-color: $color-secondary;		
+		}
+
+		&:before {
+			background-color: $color-secondary;
+		}
+	}
+
+	&:before {
+		background-color: $color-primary;
+		content: '';
+		display: block;
+		height: 6px;
+		left: 20%;
+		margin-top: -6px;
+		position: absolute;
+		top: 0px;
+		width: 60%;
+	}
+
+	h2 {
+		color: $color-primary;
+		font-size: 40px;
+		font-style: italic;
+		font-weight: 900;
+		margin: 0px 0px 5px 0px;
+		text-transform: uppercase;
+
+		@media (min-width: 767px) and (max-width: 992px) {
+			font-size: 24px;
+		}
+	}
+
+	h3 {
+		color: rgba($color-primary, .7);
+		font-size: 15px;
+		font-weight: 500;
+		margin: 0px 0px 20px 0px;		
+	}
+
+	.price {
+		background-color: $color-primary;
+		color: #fff;
+		font-size: 40px;
+		font-weight: bold;
+		padding: 10px 0px;			
+	}
+
+	ul {
+		color: $color-primary;
+		font-size: 16px;
+		font-weight: 500;
+		list-style: none;
+		margin: 0px;
+		padding: 0px;	
+
+		li {
+			padding: 14px 0px;
+
+			&:nth-child(odd) {
+				background-color: $color-gray;
+			}
+		}
+
+		@media (min-width: 767px) and (max-width: 992px) {
+			font-size: 14px; 
+		}
+	}
+
+	.btn {
+		margin-top: 30px;
+		position: relative;
+		z-index: 20;
+	}
+}
