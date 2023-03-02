@@ -204,6 +204,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('items/delete/{id}', 'AdminItemController@destroy');
     Route::get('items/add', 'AdminItemController@create');
     Route::get('items/ajax', 'AdminItemController@getAjax');
+    Route::get('items/export/{tt}', 'AdminItemController@export');
     Route::get('item-days', 'AdminItemController@getItemDays');
     Route::get('items/category/{id}', 'AdminItemController@chooseItemCategory');
     Route::get('items/choose/category/{item}/{category}', 'AdminItemController@chooseCategory');
