@@ -121,7 +121,7 @@
                                     </div>
 
                                 </div>
-                                
+
                                 <!--<div class="clearfix"></div>-->
 
 
@@ -196,7 +196,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                        <div class="row">
                         <div class="control-group form-group  col-lg-6" id="Street_holder">
                             <label for="block" class="control-label col-sm-4">Street</label>
@@ -229,7 +229,7 @@
                                 </div>
                             </div>
                         </div>
-                       <div class="row"> 
+                       <div class="row">
                         <div class="control-group form-group  col-sm-6" id="address_holder">
                             <label for="address" class="control-label col-sm-2">Address</label>
 
@@ -587,7 +587,7 @@
 
                         {{ Form::label('Package Duration','Package Duration' , array('class' => 'control-label col-sm-4')) }}
                         <div class="controls col-sm-4">
-                            <select  id="new_package_duration_id" name="package_duration_id"   class="form-control" required  >
+                            <select  id="new_package_duration_id" name="package_duration_id"   class="form-control" >
                                 <option  selected value="" >None</option>
                                 @foreach($packageDuration as $duration)
                                     <option @if($item->package_duration_id==$duration->id)  selected @endif value="{{$duration->id}}">{{$duration->titleEn}}</option>
