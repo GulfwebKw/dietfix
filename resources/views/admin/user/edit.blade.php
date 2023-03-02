@@ -214,15 +214,32 @@
                         </div>
                         <div class="row">
                         <div class="control-group form-group  col-lg-6" id="house_number_holder">
-                            <label for="house_number" class="control-label col-sm-4">House Number</label>
+                            <label for="house_number" class="control-label col-sm-4">House/Flat No</label>
                             <div class="controls col-sm-8">
                                 <input class="form-control" name="house_number" type="text" value="{{$item->house_number}}" id="house_number">
                             </div>
 
                         </div>
-                            <div class="control-group form-group  col-lg-6" >
-                                <label for="house_number_work" class="control-label  col-sm-4">Is Weekend Address Same</label>
+                            <div class="control-group form-group  col-lg-6" id="floor_holder">
+                                <label for="floor" class="control-label col-sm-4">Floor</label>
                                 <div class="controls col-sm-8">
+                                    <input class="form-control" name="floor" type="text" value="{{$item->floor}}" id="floor">
+                                </div>
+
+                            </div>
+
+                        </div>
+                <div class="row">
+                            <div class="control-group form-group  col-lg-6" id="building_holder">
+                                <label for="building_number" class="control-label col-sm-4">Building/Villa Number</label>
+                                <div class="controls col-sm-8">
+                                    <input class="form-control" name="building_number" type="text" value="{{$item->building_number}}" id="building_number">
+                                </div>
+
+                            </div>
+                            <div class="control-group form-group  col-lg-6" >
+                                <label for="house_number_work" class="control-label  col-sm-6">Is Weekend Address Same</label>
+                                <div class="controls col-sm-6">
                                     <div class="switch" data-on="success" data-off="danger">
                                         {{ Form::checkbox('is_weekend_address_same',1, $item->is_weekend_address_same ? true : null , array('class' => 'toggle','disabled'=>false)) }}
                                     </div>
@@ -230,7 +247,7 @@
                             </div>
                         </div>
                        <div class="row">
-                        <div class="control-group form-group  col-sm-6" id="address_holder">
+                        <div class="control-group form-group  col-sm-12" id="address_holder">
                             <label for="address" class="control-label col-sm-2">Address</label>
 
                             <div class="controls col-sm-10">
@@ -324,6 +341,22 @@
 
                     <div class="controls col-sm-8">
                         <input class="form-control" name="house_number_work" type="text" value="{{$item->house_number_work}}" id="house_number_work">
+                    </div>
+
+                </div>
+
+
+                <div class="control-group form-group  col-sm-6" id="floor_work_holder">
+                    <label for="floor_work" class="control-label col-sm-4">Floor</label>
+                    <div class="controls col-sm-8">
+                        <input class="form-control" name="floor_work" type="text" value="{{$item->floor_work}}" id="floor_work">
+                    </div>
+
+                </div>
+                <div class="control-group form-group  col-sm-6" id="building_work_holder">
+                    <label for="building_number_work" class="control-label col-sm-4">Building/Villa Number</label>
+                    <div class="controls col-sm-8">
+                        <input class="form-control" name="building_number_work" type="text" value="{{$item->building_number_work}}" id="building_number_work">
                     </div>
 
                 </div>

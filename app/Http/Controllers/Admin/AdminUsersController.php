@@ -100,7 +100,11 @@ class AdminUsersController extends AdminController
         $this->fields[] = array('title' => trans('main.Block'), 'name' => 'block','width' => 15,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.street'), 'name' => 'street','width' => 15,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.HouseNumber'), 'name' => 'house_number','width' => 15,'type' => 'text', 'col' => 2);
+        $this->fields[] = array('title' => trans('main.floor'), 'name' => 'floor','width' => 15,'type' => 'text', 'col' => 2);
+        $this->fields[] = array('title' => trans('main.floor'), 'name' => 'floor_work','width' => 15,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.Address'), 'name' => 'address','type' => 'textarea','col'=>1);
+        $this->fields[] = array('title' => trans('main.building_number'), 'name' => 'building_number','type' => 'text','col'=>1);
+        $this->fields[] = array('title' => trans('main.building_number'), 'name' => 'building_number_work','type' => 'text','col'=>1);
 
 
 //        $this->fields[] = array('title' => trans('main.WorkAddress'), 'name' => 'wrap1','type' => 'wrap','fields'=>[
@@ -232,7 +236,7 @@ class AdminUsersController extends AdminController
         $user=User::with(['package','packageDuration'])->whereId($userId)->first();
         $packages=Package::where('active',1)->get();
         $packageDuration=PackageDurations::whereHas('package')->where('active',1)->get();
-        
+
         return view('admin.user.renewOrAddMemberShip',['_pageTitle'=>$this->humanName,'items'=>null,'url'=>$this->url,'fields'=>[],'gridFields'=>[],'gridFieldsName'=>[],'buts'=>[],'sortType'=>$this->sortType,'sortBy'=>$this->sortBy,'customJS'=> $this->customJS,'packages'=>$packages,'packageDuration'=>$packageDuration,'user'=>$user,'remind_day'=>$remind_day]);
     }
 
@@ -491,8 +495,8 @@ class AdminUsersController extends AdminController
 
     public function saveOrder(Request $request)
     {
-        
-        
+
+
         $dateId=$request->dateId;
         $items=$request->items;
         $userId=$request->user;
@@ -508,7 +512,7 @@ class AdminUsersController extends AdminController
         }else{
             $packId=$user->package_id;
         }
-        
+
 
            //check meals counts and user chosen meals count
             $totalMealsByPackage = DB::table('packages_meals')->where('package_id', $packId)->get()->count();
@@ -687,7 +691,7 @@ class AdminUsersController extends AdminController
         $today=   date("Y-m-d");
 
         $firstDate=$today;
-       
+
         $res= $this->handelAddOrNewMembership($request,$user);
         if(!$res){
             return Redirect::back()->withErrors(['starting_date'=>'Your package has not expired yet'])->withInput();
@@ -707,7 +711,7 @@ class AdminUsersController extends AdminController
         try {
             $uId=$user->id;
 			$requestDate = !empty($request->starting_date)?$request->starting_date:'REQUEST NOT CHOSEN';
-			
+
             $this->makeAdminLog("Admin: call handelAddOrNewMembership for userId==>$uId , $requestDate ",null,$uId,"call handelAddOrNewMembership");
 
 
@@ -720,7 +724,7 @@ class AdminUsersController extends AdminController
                 $package=Package::find($request->package_id);
             }
             $forFuture= $this->forFuture($user->id);
-			
+
             $this->makeAdminLog("Admin: in handelAddOrNewMembership forFuture==? $forFuture   userId==>$uId ",null,$uId,"handelAddOrNewMembership forFuture");
 
 
@@ -752,9 +756,9 @@ class AdminUsersController extends AdminController
 
 
             if($user->package_id!=$request->package_id){
-			
+
 			    $firstDate = !empty($firstDate)?$firstDate:date('Y-m-d', strtotime(date('Y-m-d'). ' + 3 days'));
-			   
+
                 $this->makeAdminLog("Admin: in handelAddOrNewMembership, start date = $firstDate, user package_id != request package_id , startDate=$firstDate ,  userId==>$uId ",null,$uId,"handelAddOrNewMembership");
 
 
@@ -776,7 +780,7 @@ class AdminUsersController extends AdminController
                     $end->modify('+30 day');
                     $end= $end->format('Y-m-d');
                     $user->membership_end=$end;
-					
+
                     if(empty($user->membership_start)){
                     $user->membership_start = $firstDate;
                     }
@@ -812,9 +816,9 @@ class AdminUsersController extends AdminController
                     }
                 }
             }else{
-			    
+
 				$firstDate = !empty($firstDate)?$firstDate:date('Y-m-d', strtotime(date('Y-m-d'). ' + 3 days'));
-				
+
                 $this->makeAdminLog("Admin: in handelAddOrNewMembership user ,start date=$firstDate, package_id == request package_id   userId==>$uId ",null,$uId,"handelAddOrNewMembership");
 
                 if(isset($request->attach_day)){
@@ -862,7 +866,7 @@ class AdminUsersController extends AdminController
                         }else{
                             if(isset($request->starting_date)){
                                 DB::table('renew_future')->insert(['user_id'=>$user->id,'package_id'=>$package->id,'package_duration_id'=>$packageDuration->id,'starting_date'=>$request->starting_date,'pay_type'=>'admin']);
-								
+
 								$this->makeAdminLog("Admin: in handelAddOrNewMembership , dates are added for future  userId==>$uId ",null,$uId,"handelAddOrNewMembership");
                             }
                         }
@@ -963,7 +967,7 @@ class AdminUsersController extends AdminController
                 $this->item->{$field['name']} = ''; // Clear Field
             }
 
-            
+
             /*}
             catch(ErrorException $e)
             {
@@ -1037,8 +1041,8 @@ class AdminUsersController extends AdminController
 
 
     }
-    
-    
+
+
     public function is_number($var)
 	{
 		if ($var == (string) (float) $var) {
@@ -1223,36 +1227,36 @@ class AdminUsersController extends AdminController
         }])->orderBy('created_at','desc')->where('membership_end','>=',date('Y-m-d'))->get();
         return view( 'admin.activeNotificationUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
     }
-    
+
     public function sendusernotification(Request $request){
         if(empty($request->id)){
-        return ['status'=>400,'message'=>'ID is missing'];        
+        return ['status'=>400,'message'=>'ID is missing'];
         }
-        
+
         $titleAr = trans('main.driverpushtitle');
         $titleEn = trans('main.driverpushtitle');
-    
+
         $contentAr = trans('main.driverpushbody');
         $contentEn = trans('main.driverpushbody');
-        
+
         $users = User::find($request->id);
         $send = $this->sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$users);
         session()->flash('message','Message has been sent successfully');
         session()->flash('status','success');
-        return Redirect::back()->with('message','Message has been sent successfully');   
+        return Redirect::back()->with('message','Message has been sent successfully');
     }
 
     public function notificationuserpost(Request $request){
     if(empty($request->id)){
-    return ['status'=>400,'message'=>'ID is missing'];        
+    return ['status'=>400,'message'=>'ID is missing'];
     }
 
     if(empty($request->message_en)){
-    return ['status'=>400,'message'=>'Please write some message(En)'];        
+    return ['status'=>400,'message'=>'Please write some message(En)'];
     }
-    
+
     if(empty($request->message_ar)){
-    return ['status'=>400,'message'=>'Please write some message(Ar)'];        
+    return ['status'=>400,'message'=>'Please write some message(Ar)'];
     }
 
     $titleAr = !empty($request->title_ar)?$request->title_ar:'DietFix Notification';
@@ -1260,20 +1264,20 @@ class AdminUsersController extends AdminController
 
     $contentAr = !empty($request->message_ar)?$request->message_ar:'DietFix Notification';
     $contentEn = !empty($request->message_en)?$request->message_en:'DietFix Notification';
-    
+
     $users = User::find($request->id);
     $send = $this->sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$users);
     //if($send==true){
-    return ['status'=>200,'message'=>'Message has beent sent successfully'];       
+    return ['status'=>200,'message'=>'Message has beent sent successfully'];
     //}
-    //return ['status'=>400,'message'=>'Message not sent.'];    
+    //return ['status'=>400,'message'=>'Message not sent.'];
     }
 
     ///send mobile push notificatiojn
 	public function sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$users)
     {
 
-     
+
 	    $arrayToken=[];
         if(!empty($users->id)){
           \DB::table('notifications')->insert(['user_id'=>$users->id,'titleEn'=>$titleEn,'contentEn'=>$contentEn,'titleAr'=>$titleAr,'contentAr'=>$contentAr]);
@@ -1660,7 +1664,7 @@ class AdminUsersController extends AdminController
         $userId        = $request->user_id;
         $today         = date("Y-m-d");
         $firstDate     = $today;
-		
+
         $validator     = Validator::make(Input::all(),['starting_date'=>"required|date|date_format:Y-m-d|after_or_equal:$firstDate"]);
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator->messages())->withInput();
@@ -1668,9 +1672,9 @@ class AdminUsersController extends AdminController
 
         $firstValidDay=$request->starting_date;
         $user=User::whereId($userId)->first();
-		
+
 		//check resume date should not override the available date
-		
+
 			$resumeDay = UserDate::where('user_id',$user->id)->where('freeze',1)->orderBy('date','asc')->first();
             if(!empty($resumeDay->id)){
 			$date1  = Carbon::createFromFormat('Y-m-d', $resumeDay->date);
@@ -1682,8 +1686,8 @@ class AdminUsersController extends AdminController
             return Redirect::back();
 			}
 			}
-			
-   
+
+
         $countExistFreeze = UserDate::where('user_id',$userId)->where('date','>=',$user->membership_start)->where('freeze',1)->orderBy('date','asc')->get();
         $count = $countExistFreeze->count();
         if($count<=0){
@@ -1691,13 +1695,13 @@ class AdminUsersController extends AdminController
             session()->flash('status','danger');
             return Redirect::back();
         }
-		
-		
-		
+
+
+
 		foreach($countExistFreeze as $key=>$freezDate){
 		$newDay = date("Y-m-d",strtotime("+$key day", strtotime($firstValidDay)));
 		//check date exist
-		
+
 		$existDayE = UserDate::where('date',$newDay)->where('user_id',$userId)->first();
 		if(!empty($existDayE->id)){
 		$existDayE->freeze         = 0;
@@ -1707,13 +1711,13 @@ class AdminUsersController extends AdminController
         $existDayE->isMealSelected = 0;
         }
         if(!empty($user->package_id) && empty($existDayE->package_id)){
-            $existDayE->package_id = $user->package_id;    
+            $existDayE->package_id = $user->package_id;
             }
         $existDayE->save();
 		}else{
-		$existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();    
+		$existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();
 		$existDayE->date           = $newDay;
-		$existDayE->freeze         = 0; 
+		$existDayE->freeze         = 0;
 		$existDayE->update_status  = 'admin';
 		if(!empty($this->isOrderExist($existDayE->id,$userId))){
         $existDayE->isMealSelected = 1;
@@ -1722,26 +1726,26 @@ class AdminUsersController extends AdminController
         }
 
         if(!empty($user->package_id) && empty($existDayE->package_id)){
-        $existDayE->package_id = $user->package_id;    
+        $existDayE->package_id = $user->package_id;
         }
 
         $existDayE->save();
 		}
-		
-        
-		
+
+
+
 		$this->makeAdminLog("Admin:unfreez by admin,PackageID=".$user->package_id." date==>".$newDay."-----".$freezDate->id."  userId==>".$userId,null,$userId,"unfreeze days  and attach days");
 		}
-		
+
 		$this->checkpendingdays($firstValidDay,$userId);
 
         session()->flash('message','successfully UnFreeze days ');
         session()->flash('status','success');
         return Redirect::back();
     }
-    
+
     public function isOrderExist($id,$userId){
-    $order = Order::where('date_id',$id)->where('user_id',$userId)->get();  
+    $order = Order::where('date_id',$id)->where('user_id',$userId)->get();
     if(!empty($order) && count($order)>0){
     Order::where('date_id',$id)->where('user_id',$userId)->update(['freeze'=>0]);
     return true;
@@ -1749,18 +1753,18 @@ class AdminUsersController extends AdminController
     return false;
     }
     }
-    
-    
+
+
     public function checkpendingdays($firstValidDay,$userId){
         $countExistFreeze = UserDate::where('user_id',$userId)->where('date','<',$firstValidDay)->where('freeze',1)->get();
         if(!empty($countExistFreeze) && count($countExistFreeze)>0){
-            $lastDay=UserDate::where('date','>',$firstValidDay)->where('user_id',$userId)->where('freeze',0)->orderBy('date','desc')->first();    
+            $lastDay=UserDate::where('date','>',$firstValidDay)->where('user_id',$userId)->where('freeze',0)->orderBy('date','desc')->first();
             foreach($countExistFreeze as $key=>$freezDate){
                 $keys = $key+1;
                 $newDay = date("Y-m-d",strtotime("+".$keys." day", strtotime($lastDay->date)));
-                $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();    
+                $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();
                 $existDayE->date           = $newDay;
-                $existDayE->freeze         = 0; 
+                $existDayE->freeze         = 0;
                 $existDayE->update_status  = 'admin';
                 $existDayE->save();
             }

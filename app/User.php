@@ -59,6 +59,8 @@ class User extends Authenticatable
         'weight',
         'bmi',
         'address',
+        'building_number',
+        'building_number_work',
         'standard_menu_id',
         'autoapprove_menus'
     );

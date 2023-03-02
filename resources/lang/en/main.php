@@ -303,6 +303,8 @@ return [
     "Avenue"=>"Avenue",
     "Block"=>"Block",
     "HouseNumber"=>"House Number",
+    "building_number"=>"Building/Villa Number",
+    "floor"=>"House Number",
     "Avenue(Work)"=>"Avenue(Work)",
     "Block(Work)"=>"Block(Work)",
     "HouseNumber(Work)"=>"House Number(Work)",
