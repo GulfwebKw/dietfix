@@ -47,6 +47,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('payments/ajax', 'AdminPaymentsController@getAjax');
     Route::get('payments/edit/{id}', 'AdminPaymentsController@edit');
     Route::post('payments/delete', 'AdminPaymentsController@postDelete');
+    Route::get('payments/export', 'AdminPaymentsController@export')->name('adminExportPayment');
     Route::get('payments/{type}', 'AdminPaymentsController@indexcustom');
     Route::resource('payments', 'AdminPaymentsController')->only(['index']);;
 

@@ -59,16 +59,19 @@
                         Paid <i class="fa fa-list"></i>
 
                     </a>
-                
-                @endif
-                @if ($b['name'] == 'UnPaid')
+
+                @elseif ($b['name'] == 'UnPaid')
 
                     <a  class="btn red" href="/admin/payments/unpaid">
 
                         UnPaid <i class="fa fa-list"></i>
 
                     </a>
-                
+                @elseif ($b['name'] == 'Export')
+
+                    <a id="grid_{{ strtolower($b['name']) }}" class="btn {{ $b['color'] }}" href="{{ route('adminExportPayment') }}">
+                        @lang('main.'.$b['name']) <i class="fa fa-{{ $b['icon'] }}"></i>
+                    </a>
                 @endif
 
             @endforeach
@@ -87,7 +90,7 @@
 
             <thead class="flip-content">
 
-           
+
             <?php if($menuUrl=="admin/membership"){$sdate = Session::get('sdate');?>
             Filter by Date: <input id="startdate" value="<?php if(!empty($sdate)){ echo $sdate;}?>" class="form-control input-sm" style="width:150px;">
             <?php }?>
@@ -289,7 +292,7 @@
 
         });
         //
-        
+
 
         $(function(){
             $("#startdate").datepicker({
