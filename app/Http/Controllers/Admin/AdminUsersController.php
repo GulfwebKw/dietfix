@@ -1596,8 +1596,29 @@ class AdminUsersController extends AdminController
 //        }])->orderBy('created_at','desc')->where('membership_end','>=',date('Y-m-d'))->get();
         $user= User::with(['package','dates'])->orderBy('membership_start','desc')->where('membership_end','>=',date('Y-m-d'))->get();
         return view( 'admin.activeUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
+    }
 
-
+    public function exportActiveUser()
+    {
+        $user= User::with(['package','dates'])->orderBy('membership_start','desc')->where('membership_end','>=',date('Y-m-d'));
+        $columns = [ // Set Column to be displayed
+            'Code' => 'id',
+            trans('main.User Name') => 'username',
+            trans('main.Email Address') => 'email',
+            trans('main.Phone No.') => 'phone',
+            trans('main.Mobile') => 'mobile_number',
+            trans('main.Package') => function ($item) {
+                return optional($item->package)->titleEn;
+            },
+            trans('main.Clinic') => function ($item) {
+                return optional($item->clinic)->titleEn;
+            },
+            'Expired At' => 'membership_end',
+            'Remaining Days' => function ($item) {
+                return \Carbon\Carbon::parse($item->membership_end . ' 00:00:00')->diffForHumans();
+            }
+        ];
+        return getCsvExport($user, $columns, 'Active_user_report_');
     }
 
     public function getDemoUser()

@@ -91,6 +91,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::post('users/addDay', 'AdminUsersController@addDay');
     Route::get('users/edit/{id}', 'AdminUsersController@edit');
     Route::get('users/active', 'AdminUsersController@getActiveUser');
+    Route::get('users/active/export', 'AdminUsersController@exportActiveUser')->name('exportActiveUser');
     Route::get('users/demo', 'AdminUsersController@getDemoUser');
     Route::get('users/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
