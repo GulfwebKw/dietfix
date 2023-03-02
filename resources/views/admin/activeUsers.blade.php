@@ -59,7 +59,7 @@
                 <th>{{trans('main.Mobile')}}</th>
                 <th>{{trans('main.Package')}}</th>
                 <th>Clinic</th>
-                {{--                <th>Remaining Days</th>--}}
+                <th>Remaining Days</th>
                 <th>{{trans('main.Active')}}</th>
             </tr>
 
@@ -74,7 +74,7 @@
                     <td>{{$user->mobile_number}}</td>
                     <td>{{optional($user->package)->titleEn}}</td>
                     <td>{{optional($user->clinic)->titleEn}}</td>
-                    {{--                        <td>{{$user->dates->count()}}</td>--}}
+                    <td>{{$user->membership_end }}<br>{{ Carbon\Carbon::parse($user->membership_end . ' 00:00:00')->diffForHumans()}}</td>
                     <td>
                         <a href="/admin/users/renew-or-addmembership/{{$user->id}}" data-id="4280" class="nwrap btn btn-xs green btn-block "><i class="fa fa-print"></i> Renew/Add Membership</a>
                         <a href="/admin/users/orders/{{$user->id}}" data-id="{{$user->id}}" class="nwrap btn btn-xs red btn-block "><i class="fa fa-print"></i> Orders</a>

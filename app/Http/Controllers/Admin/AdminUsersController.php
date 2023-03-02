@@ -1591,9 +1591,10 @@ class AdminUsersController extends AdminController
 
     public function getActiveUser()
     {
-        $user= User::with(['package','dates'=>function($r){
-            $r->where('date','>=',date('Y-m-d'));
-        }])->orderBy('created_at','desc')->where('membership_end','>=',date('Y-m-d'))->get();
+//        $user= User::with(['package','dates'=>function($r){
+//            $r->where('date','>=',date('Y-m-d'));
+//        }])->orderBy('created_at','desc')->where('membership_end','>=',date('Y-m-d'))->get();
+        $user= User::with(['package','dates'])->orderBy('membership_start','desc')->where('membership_end','>=',date('Y-m-d'))->get();
         return view( 'admin.activeUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
 
 
