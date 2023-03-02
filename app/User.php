@@ -90,16 +90,16 @@ class User extends Authenticatable
             'doctor_id' => 'integer',
             'membership_start' => 'date',
             'membership_end' => 'date',
-            'height' => 'nullable|integer',
-            'weight' => 'nullable|integer',
+            'height' => 'nullable|numeric',
+            'weight' => 'nullable|numeric',
             'bmi' => '',
         ),
         'update' => array(
             'username' => 'min:2|max:20',
             'email' => 'required|email|min:6|max:60',
             'country_id' => 'required',
-            'height' => 'nullable|integer',
-            'weight' => 'nullable|integer',
+            'height' => 'nullable|numeric',
+            'weight' => 'nullable|numeric',
         ),
     );
 
