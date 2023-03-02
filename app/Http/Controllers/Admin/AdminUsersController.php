@@ -15,6 +15,7 @@ use App\Models\Clinic\Order;
 use App\Models\Clinic\PackageDurations;
 use App\Models\Clinic\Payment;
 use App\Models\Clinic\UserDate;
+use App\Models\Delivery;
 use App\Models\ReferralUser;
 use DateTime;
 use Illuminate\Http\Request;
@@ -67,6 +68,7 @@ class AdminUsersController extends AdminController
         $this->salt = ['No Salt' => trans('main.No Salt'),'Medium Salt' => trans('main.Medium Salt')];
 
         $this->delivery = ['Morning' =>trans('main.Morning'),'After Noon' => trans('main.After Noon'),'Evening' => trans('main.Evening')];
+        $this->deliveryType = Delivery::all();
 
         // $provinces = DB::table('provinces');
         // $this->provinces = $provinces->lists('title'.ucfirst(LANG_SHORT), 'id');
@@ -138,6 +140,7 @@ class AdminUsersController extends AdminController
         $this->fields[] = array('title' => trans('main.Sex'), 'name' => 'sex','type' => 'select', 'data' => $this->sex, 'col' => 2,'valOptions'=>'otherType');
         $this->fields[] = array('title' => trans('main.Salt'), 'name' => 'salt','type' => 'select', 'data' => $this->salt, 'value' => 'Medium Salt', 'col' => 2,'valOptions'=>'otherType');
         $this->fields[] = array('title' => trans('main.Delivery'), 'name' => 'delivery', 'width' => 10, 'type' => 'select', 'col' =>2, 'data'=> $this->delivery,'valOptions'=>'otherType');
+        $this->fields[] = array('title' => trans('main.delivery_type'), 'name' => 'delivery_type', 'width' => 10, 'type' => 'select', 'col' =>2, 'data'=> $this->deliveryType,'valOptions'=>'otherType');
 
         $this->fields[] = array('title' => trans('main.Height'), 'name' => 'height','type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.Weight'), 'name' => 'weight','type' => 'text', 'col' => 2);
@@ -1530,6 +1533,7 @@ class AdminUsersController extends AdminController
             ->with('sex',$this->sex)
             ->with('salt',$this->salt)
             ->with('delivery',$this->delivery)
+            ->with('deliveryType',$this->deliveryType)
             ->with('packages',$this->packages->get())
             ->with('packageDuration',$packageDuration)
             ->with( 'provinces',$this->provinces );
@@ -1566,6 +1570,7 @@ class AdminUsersController extends AdminController
             ->with('sex',$this->sex)
             ->with('salt',$this->salt)
             ->with('delivery',$this->delivery)
+            ->with('deliveryType',$this->deliveryType)
             ->with('packages',$this->packages->get())
             ->with('packageDuration',$packageDuration)
             ->with( 'provinces',$this->provinces );

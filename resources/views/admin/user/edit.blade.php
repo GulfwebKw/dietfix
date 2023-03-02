@@ -458,11 +458,21 @@
 
                 </div>
                 <div class="control-group form-group  col-sm-6" id="delivery_holder">
-                    <label for="delivery" class="control-label col-sm-4">Delivery</label>
+                    <label for="delivery" class="control-label col-sm-4">Delivery Time</label>
                     <div class="controls col-sm-8">
                         <select class="chosen-select" id="delivery" name="delivery" style="display: none;">
                             @foreach($delivery as $k=>$val)
                                 <option value="{{$k}}"  @if($k==$item->delivery) selected @endif > {{$val}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group form-group  col-sm-6" id="delivery_type_holder">
+                    <label for="delivery_type" class="control-label col-sm-4">Delivery Type</label>
+                    <div class="controls col-sm-8">
+                        <select class="chosen-select" id="delivery_type" name="delivery_type" style="display: none;">
+                            @foreach($deliveryType as $k=>$val)
+                                <option value="{{$val->id}}"  @if($val->id==$item->delivery_type) selected @endif > {{$val->type_en}}</option>
                             @endforeach
                         </select>
                     </div>
