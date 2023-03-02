@@ -94,7 +94,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('users/demo', 'AdminUsersController@getDemoUser');
     Route::get('users/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
-    //client days 
+    //client days
     Route::get('users_days/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users_days/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
     Route::post('users_days/freeze/{id}', 'AdminUsersController@freezeDays');
@@ -179,6 +179,15 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('portions/add', 'AdminPortionsController@create');
     Route::get('portions/ajax', 'AdminPortionsController@getAjax');
     Route::resource('portions', 'AdminPortionsController')->only(['index']);;
+
+
+    Route::post('delivery_type/save', 'AdminDeliveryTypeController@store');
+    Route::post('delivery_type/delete', 'AdminDeliveryTypeController@postDelete');
+    Route::get('delivery_type/edit/{id}', 'AdminDeliveryTypeController@edit');
+    Route::get('delivery_type/delete/{id}', 'AdminDeliveryTypeController@destroy');
+    Route::get('delivery_type/add', 'AdminDeliveryTypeController@create');
+    Route::get('delivery_type/ajax', 'AdminDeliveryTypeController@getAjax');
+    Route::resource('delivery_type', 'AdminDeliveryTypeController')->only(['index']);;
 
 
     Route::post('addons/save', 'AdminAddonController@store');
