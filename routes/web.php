@@ -382,6 +382,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
 
     Route::get('membership/{endDate}', 'MembershipDashboard@getEndDahsFilterDate');
     Route::get('membership/ajax', 'MembershipDashboard@getAjax');
+    Route::get('membership-export', 'MembershipDashboard@export')->name('adminExportMembership');
     Route::resource('membership', 'MembershipDashboard')->only(['index']);; //
 
     Route::get('membership_suspension/ajax', 'MembershipSuspensionController@getAjax');
