@@ -94,6 +94,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('users/active', 'AdminUsersController@getActiveUser');
     Route::get('users/active/export', 'AdminUsersController@exportActiveUser')->name('exportActiveUser');
     Route::get('users/demo', 'AdminUsersController@getDemoUser');
+    Route::get('users/birthdays-upcoming', 'AdminUsersController@birthdaysUpcoming');
     Route::get('users/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
     //client days

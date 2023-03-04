@@ -1627,6 +1627,12 @@ class AdminUsersController extends AdminController
         return view( 'admin.activeUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
 
     }
+    public function birthdaysUpcoming()
+    {
+        $user= User::with(['package','dates'])->whereNotNull('dob')->orderByRaw('DAYOFYEAR(dob) < DAYOFYEAR(CURDATE()), DAYOFYEAR(dob)')->get();
+        return view( 'admin.birthdaysUpcomingUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
+
+    }
 
     public function getFreezeView($id)
     {
