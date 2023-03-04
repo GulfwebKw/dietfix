@@ -520,7 +520,7 @@ class KitchenController extends MainController
         $orders = $this->get_current_orders();
         $data['orders'] = $orders;
 
-        $pdf=\PDF2::loadView('kitchen.temp',array("data"=>$data));
+        $pdf=\PDF2::loadView('kitchen.temp',array("data"=>$data , "showIdOnPrint" => config("settings.showIdOnPrintInKitchen" , true)));
         $pdf->setPaper(array(0,0,114,172), 'landscape');
         return $pdf->stream('test_pdf.pdf');
 
@@ -661,8 +661,10 @@ class KitchenController extends MainController
             $txt .= ' ' . Input::get('date');
             $txt .= '<br>';
             $txt .= $order->user->salt;
-            $txt .= '<br>';
-            $txt .= ' ID:'.$order->user->id;
+            if ( config("settings.showIdOnPrintInKitchen" , true) ) {
+                $txt .= '<br>';
+                $txt .= ' ID:' . $order->user->id;
+            }
             $txt .= '<br>';
 
             if (!$order->addons->isEmpty()) {

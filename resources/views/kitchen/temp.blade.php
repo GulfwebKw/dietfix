@@ -33,11 +33,13 @@
         {{' '.\Input::get('date')}}@if(!empty($order->user->packageone->{'title'.LANG})),{{($order->user->packageone->{'title'.LANG})}}@endif
 
         <br>
+        @if( $showIdOnPrint )
         <p>
             {!!  optional($order->user)->salt
                ."<br>".' ID:'.$order->user->id
             !!}
        </p>
+        @endif
         @if(!$order->addons->isEmpty())
             @php $addOnItem[$order->id]=[]; @endphp
             @foreach ($order->addons as $addon)

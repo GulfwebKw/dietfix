@@ -1,5 +1,6 @@
 <?php
 return [
+  "showIdOnPrintInKitchen" => false,
   "siteNameAr" => [
     "value" => "دايت فكس",
     "help" => "يتم كتابة اسم الموقع بالعربية هنا",
@@ -108,7 +109,7 @@ return [
   ],
   "sms_message" => [
     "value" => "
-      كود تسجيلك معنا هو: 
+      كود تسجيلك معنا هو:
       |CODE|
       ",
     "help" => "",
