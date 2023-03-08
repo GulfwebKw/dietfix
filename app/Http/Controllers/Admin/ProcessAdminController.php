@@ -145,7 +145,7 @@ class ProcessAdminController extends AdminController
             return $Count;
         });
 
-        dd($data);
+//        dd($data);
         return View::make('admin.home' , ['animalistic_data' => $data])->with('_pageTitle',trans('main.Home'));
 
     }
@@ -177,7 +177,7 @@ class ProcessAdminController extends AdminController
 
 
         if (Auth::attempt(array('username' => Input::get('username'), 'password' => Input::get('password'), 'active' => 1,'isAdmin' => 1),Input::get('remember'))){
-            
+
             return Redirect::to('/'.env('ADMIN_FOLDER').'/'.$uri);
         } else
             return View::make('admin.login')->with('messages', array(trans('main.Wrong Password or Username, Please check your form submission, and ty again')))->with('_pageTitle', trans('main.Login'));
