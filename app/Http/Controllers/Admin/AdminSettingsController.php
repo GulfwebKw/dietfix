@@ -101,10 +101,12 @@ class AdminSettingsController extends AdminController
 
         $this->fields[] = ['title' => trans('main.Language'), 'name' => 'defaultLang','type' => 'select','valOptions'=>'otherType','data' => ['ar' =>'Arabic','en' => 'English'],'col' => 2];
         $this->fields[] = ['title' => trans('main.Phone'), 'name' => 'phone','type' => 'text','col' => 2];
-		
+
 		$this->fields[] = ['title' => trans('main.WhatsApp'), 'name' => 'whatsapp','type' => 'number','col' => 2];
 
         $this->fields[] = ['title' => trans('main.Mobile'), 'name' => 'mobile','type' => 'text','col' => 2];
+        $this->fields[] = ['title' => 'print label Production -day', 'name' => 'printLabelProduction','type' => 'number','col' => 2];
+        $this->fields[] = ['title' => 'print label Expiry +day', 'name' => 'printLabelExpiry','type' => 'number','col' => 2];
 
 
         // $this->fields[] = ['title' => trans('main.Mail List Url'), 'name' => 'maillist_url' ,'type' => 'text'];

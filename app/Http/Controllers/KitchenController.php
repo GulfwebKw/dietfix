@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Clinic\Day;
 use App\Models\Clinic\Order;
 use App\Models\Clinic\UserDate;
+use App\Models\Setting;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -519,8 +520,10 @@ class KitchenController extends MainController
         }
         $orders = $this->get_current_orders();
         $data['orders'] = $orders;
-
-        $pdf=\PDF2::loadView('kitchen.temp',array("data"=>$data , "showIdOnPrint" => config("settings.showIdOnPrintInKitchen" , true)));
+        $setting = Setting::getSetting() ;
+        $productionDay = $setting['printLabelProduction'] ? $setting['printLabelProduction']['value'] : 1 ;
+        $expireDay = $setting['printLabelExpiry'] ? $setting['printLabelExpiry']['value'] : 15 ;
+        $pdf=\PDF2::loadView('kitchen.temp',array("productionDay" => $productionDay , "expireDay" => $expireDay ,"data"=>$data , "showIdOnPrint" => config("settings.showIdOnPrintInKitchen" , true)));
         $pdf->setPaper(array(0,0,114,172), 'landscape');
         return $pdf->stream('test_pdf.pdf');
 
@@ -649,6 +652,11 @@ class KitchenController extends MainController
 
         $h = 25.1;
 
+
+        $setting = Setting::getSetting() ;
+        $productionDay = $setting['printLabelProduction'] ? $setting['printLabelProduction']['value'] : 1 ;
+        $expireDay = $setting['printLabelExpiry'] ? $setting['printLabelExpiry']['value'] : 15 ;
+
         foreach ($data['orders'] as $order) {
 
             $txt  = '<br>';
@@ -659,6 +667,10 @@ class KitchenController extends MainController
             $txt .= '<br>';
             $txt .= ($order->portion) ? $order->portion->{'title'.LANG} : '';
             $txt .= ' ' . Input::get('date');
+            $txt .= '<br>';
+            $txt .=  'Production : ' . date('Y-m-d' , strtotime(Input::get('date') . ' -'.$productionDay.' days ') );
+            $txt .= '<br>';
+            $txt .=  'Expiry : ' . date('Y-m-d' , strtotime(Input::get('date') . ' +'.$expireDay.' days ') );
             $txt .= '<br>';
             $txt .= $order->user->salt;
             if ( config("settings.showIdOnPrintInKitchen" , true) ) {
