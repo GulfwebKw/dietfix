@@ -599,6 +599,7 @@ Route::middleware(['web', 'authUser'])->group(function () {
 
     Route::post('kitchen/get-packaging', 'KitchenController@postGetPackaging');
     Route::get('kitchen/get-packaging', 'KitchenController@getGetPackaging');
+    Route::get('kitchen/report/pdf/{id}/pk', 'KitchenController@pkReportPDF')->name('pkReportPDF');
     Route::get('kitchen/get-packaging2', 'KitchenController@getPackagingPdf');
     Route::get('kitchen/approve-all/{id}', 'KitchenController@getApproveAll');
     Route::get('kitchen/user-menu/{id}', 'KitchenController@getUserMenu');

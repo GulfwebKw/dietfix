@@ -6,6 +6,7 @@ use App\Models\Clinic\Day;
 use App\Models\Clinic\Order;
 use App\Models\Clinic\UserDate;
 use App\Models\Setting;
+use App\User;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -902,7 +903,24 @@ class KitchenController extends MainController
 
     }
 
-
+    public function pkReportPDF($id)
+    {
+        if ($this->notKitchen()) {
+            return $this->dontAllow();
+        }
+        $user = User::where('active' , 1 )
+            ->with('area.province')
+            ->with('country')
+            ->with('countryWeekends')
+            ->with('province')
+            ->with('provinceWeekends')
+            ->with('area')
+            ->with('areaWeekends')
+            ->findorfail($id);
+        $pdf=\PDF2::loadView('kitchen.addressPdf',array("user" => $user));
+        $pdf->setPaper(array(0,0,114,172), 'landscape');
+        return $pdf->stream('address_'.$id.'.pdf');
+    }
 
     public function getGetPackaging()
 
