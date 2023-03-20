@@ -1598,6 +1598,15 @@ class AdminUsersController extends AdminController
         return view( 'admin.activeUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
     }
 
+    public function getNotActive()
+    {
+        $user= User::with(['package','dates'])
+            ->orderBy('membership_end','desc')
+            ->where('membership_end','<',date('Y-m-d'))
+            ->paginate();
+        return view( 'admin.NotActiveUsers',['_pageTitle'=>$this->humanName,'users'=>$user]);
+    }
+
     public function exportActiveUser()
     {
         $user= User::with(['package','dates'])->orderBy('membership_start','desc')->where('membership_end','>=',date('Y-m-d'));

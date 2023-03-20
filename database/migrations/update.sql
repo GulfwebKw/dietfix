@@ -6,3 +6,6 @@ ALTER TABLE `users` ADD FOREIGN KEY (`delivery_type`) REFERENCES `delivery_type`
 INSERT INTO `admin_menu` (`id`, `menuTitleEn`, `menuTitleAr`, `menuLink`, `menuIco`, `menu_id`, `ordering`, `visible`) VALUES (NULL, 'Upcoming Birthdays', 'أعياد الميلاد القادمة', 'users/birthdays-upcoming', 'birthday-cake', '0', '150', '1');
 
 INSERT INTO `settings` (`id`, `key`, `value`, `help`) VALUES (NULL, 'printLabelProduction', '1', ''), (NULL, 'printLabelExpiry', '15', '');
+
+
+INSERT INTO `admin_menu` (`id`, `menuTitleEn`, `menuTitleAr`, `menuLink`, `menuIco`, `menu_id`, `ordering`, `visible`) VALUES (NULL, 'Not Active Users', 'العملاء', 'users/notActive', 'user', '0', '150', '1')
