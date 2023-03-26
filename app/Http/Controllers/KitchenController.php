@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Clinic\Day;
 use App\Models\Clinic\Order;
+use App\Models\Clinic\Province;
 use App\Models\Clinic\UserDate;
 use App\Models\Setting;
 use App\User;
@@ -156,6 +157,14 @@ class KitchenController extends MainController
 
         }
 
+
+
+        $weekEndAddress=false;
+        $nameOfDay = date('l', strtotime(\request()->date));
+        if($nameOfDay=="Saturday" || $nameOfDay=="Friday"){
+            $weekEndAddress=true;
+        }
+
         $orders = $this->get_current_orders();
 
 
@@ -165,27 +174,30 @@ class KitchenController extends MainController
             $users = [];
 
             foreach ($orders as $order) {
-
-                $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
-
+                if ( request()->get('driver' , false)  ){
+                    if ( $order->user->province_id ==  request()->get('driver' , false)  )
+                        $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
+                } else
+                    $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
             }
 
             $orders->users = $users;
 
         }
 
-
-
-        $weekEndAddress=false;
-        $nameOfDay = date('l', strtotime(\request()->date));
-        if($nameOfDay=="Saturday" || $nameOfDay=="Friday"){
-            $weekEndAddress=true;
+        if ( \request()->get('download' , false ) ) {
+            $pdf=\PDF2::loadView('kitchen.delivery_print',array("orders"=>$orders,'weekEndAddress'=>$weekEndAddress));
+            $pdf->setPaper(array(0,0,281,350), 'landscape');
+            return $pdf->stream('delivery.pdf');
         }
 
+        $drivers = Province::query()->where('active' , 1 )
+            ->orderBy('ordering')->get();
 
         return View::make('kitchen.delivery')
             ->with('orders',$orders)
             ->with('type','delivery')
+            ->with('drivers',$drivers)
             ->with('weekEndAddress',$weekEndAddress)
             ->withTitle(trans('main.Delivery'));
 

@@ -27,18 +27,31 @@
 		{{ Form::label('date', trans('main.Date')) }}
 		<div class="control-group form-group">
 			<div class="controls">
-				{{ Form::text('date', null, array('class' => 'datepicker form-control','id' => 'date')) }}
+				{{ Form::text('date', request()->get('date'), array('class' => 'datepicker form-control','id' => 'date')) }}
 			</div>
+		</div>
+		{{ Form::label('driver', 'Driver') }}
+		<div class="control-group form-group">
+			<div class="controls">
+                <select name="driver" id="driver" class="form-control chosen">
+                    <option value="">All</option>
+                    @foreach($drivers as $driver)
+                        <option value="{{ $driver->id }}" @if(request()->get('driver' , false) == $driver->id ) selected @endif>{{ $driver->{'title'.LANG} }}</option>
+                    @endforeach
+                </select>
+            </div>
 		</div>
 
 
 		<div class="control-group form-group">
 			{{ Form::button('<i class="fa fa-search"></i>', array('class' => 'btn btn-primary','id' => 'submit','type' => 'submit')) }}
 		</div>
+    <a href="{{ request()->fullUrlWithQuery(['download' => '1']) }} " class="btn btn-primary"><i class="fa fa-download"></i> Download</a>
+
 
 	{{ Form::close() }}
 
-	@if ($orders->isEmpty())
+	@if (count($orders->users) == 0 )
 		<div>
 			{{ trans('main.No Results') }}
 		</div>
