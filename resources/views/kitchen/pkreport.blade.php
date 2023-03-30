@@ -46,6 +46,7 @@
 						  <th colspan="1">{{ trans('main.Name') }}</th>
 			             <th colspan="1">{{ trans('main.Phone') }}</th>
                           <th colspan="1">{{ trans('main.Package') }}</th>
+                          <th colspan="1">Download</th>
 		                </tr>
 						@if (empty($orders))
 					    	<tr><td colspan="4">{{ trans('main.No Results') }}</td></tr>
@@ -56,6 +57,7 @@
 									<td colspan="1">{{ $user->username }}</td>
 									<td colspan="1">{{ $user->mobile_number }}</td>
 									<td colspan="1">{{ $user->package}}</td>
+                                    <td colspan="1"><a href="{{ route('pkReportPDF' , $user->id) }}"><i class="fa fa-download"></i></a></td>
 								</tr>
 							@endforeach
 					    @endif

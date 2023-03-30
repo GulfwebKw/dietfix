@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Clinic\Day;
 use App\Models\Clinic\Order;
+use App\Models\Clinic\Province;
 use App\Models\Clinic\UserDate;
+use App\Models\Setting;
+use App\User;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -154,6 +157,14 @@ class KitchenController extends MainController
 
         }
 
+
+
+        $weekEndAddress=false;
+        $nameOfDay = date('l', strtotime(\request()->date));
+        if($nameOfDay=="Saturday" || $nameOfDay=="Friday"){
+            $weekEndAddress=true;
+        }
+
         $orders = $this->get_current_orders();
 
 
@@ -163,27 +174,30 @@ class KitchenController extends MainController
             $users = [];
 
             foreach ($orders as $order) {
-
-                $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
-
+                if ( request()->get('driver' , false)  ){
+                    if ( $order->user->province_id ==  request()->get('driver' , false)  )
+                        $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
+                } else
+                    $users[$order->user->province_id][$order->user->area_id][$order->user->id] = $order->user;
             }
 
             $orders->users = $users;
 
         }
 
-
-
-        $weekEndAddress=false;
-        $nameOfDay = date('l', strtotime(\request()->date));
-        if($nameOfDay=="Saturday" || $nameOfDay=="Friday"){
-            $weekEndAddress=true;
+        if ( \request()->get('download' , false ) ) {
+            $pdf=\PDF2::loadView('kitchen.delivery_print',array("orders"=>$orders,'weekEndAddress'=>$weekEndAddress));
+            $pdf->setPaper(array(0,0,281,350), 'landscape');
+            return $pdf->stream('delivery.pdf');
         }
 
+        $drivers = Province::query()->where('active' , 1 )
+            ->orderBy('ordering')->get();
 
         return View::make('kitchen.delivery')
             ->with('orders',$orders)
             ->with('type','delivery')
+            ->with('drivers',$drivers)
             ->with('weekEndAddress',$weekEndAddress)
             ->withTitle(trans('main.Delivery'));
 
@@ -519,8 +533,10 @@ class KitchenController extends MainController
         }
         $orders = $this->get_current_orders();
         $data['orders'] = $orders;
-
-        $pdf=\PDF2::loadView('kitchen.temp',array("data"=>$data));
+        $setting = Setting::getSetting() ;
+        $productionDay = $setting['printLabelProduction'] ? $setting['printLabelProduction']['value'] : 1 ;
+        $expireDay = $setting['printLabelExpiry'] ? $setting['printLabelExpiry']['value'] : 15 ;
+        $pdf=\PDF2::loadView('kitchen.temp',array("productionDay" => $productionDay , "expireDay" => $expireDay ,"data"=>$data , "showIdOnPrint" => config("settings.showIdOnPrintInKitchen" , true)));
         $pdf->setPaper(array(0,0,114,172), 'landscape');
         return $pdf->stream('test_pdf.pdf');
 
@@ -649,6 +665,11 @@ class KitchenController extends MainController
 
         $h = 25.1;
 
+
+        $setting = Setting::getSetting() ;
+        $productionDay = $setting['printLabelProduction'] ? $setting['printLabelProduction']['value'] : 1 ;
+        $expireDay = $setting['printLabelExpiry'] ? $setting['printLabelExpiry']['value'] : 15 ;
+
         foreach ($data['orders'] as $order) {
 
             $txt  = '<br>';
@@ -660,9 +681,15 @@ class KitchenController extends MainController
             $txt .= ($order->portion) ? $order->portion->{'title'.LANG} : '';
             $txt .= ' ' . Input::get('date');
             $txt .= '<br>';
-            $txt .= $order->user->salt;
+            $txt .=  'Production : ' . date('Y-m-d' , strtotime(Input::get('date') . ' -'.$productionDay.' days ') );
             $txt .= '<br>';
-            $txt .= ' ID:'.$order->user->id;
+            $txt .=  'Expiry : ' . date('Y-m-d' , strtotime(Input::get('date') . ' +'.$expireDay.' days ') );
+            $txt .= '<br>';
+            $txt .= $order->user->salt;
+            if ( config("settings.showIdOnPrintInKitchen" , true) ) {
+                $txt .= '<br>';
+                $txt .= ' ID:' . $order->user->id;
+            }
             $txt .= '<br>';
 
             if (!$order->addons->isEmpty()) {
@@ -888,7 +915,24 @@ class KitchenController extends MainController
 
     }
 
-
+    public function pkReportPDF($id)
+    {
+        if ($this->notKitchen()) {
+            return $this->dontAllow();
+        }
+        $user = User::where('active' , 1 )
+            ->with('area.province')
+            ->with('country')
+            ->with('countryWeekends')
+            ->with('province')
+            ->with('provinceWeekends')
+            ->with('area')
+            ->with('areaWeekends')
+            ->findorfail($id);
+        $pdf=\PDF2::loadView('kitchen.addressPdf',array("user" => $user));
+        $pdf->setPaper(array(0,0,114,172), 'landscape');
+        return $pdf->stream('address_'.$id.'.pdf');
+    }
 
     public function getGetPackaging()
 

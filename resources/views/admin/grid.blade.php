@@ -133,7 +133,7 @@
 
                 @if(array_key_exists('width',$field))
 
-                    <th width="{{ $field['width'] or 10 }}%">
+                    <th width="{{ $field['width']? $field['width'] : 10 }}%">
 
                         {{ $field['title'] }}
 
@@ -176,7 +176,7 @@
 	<script>
 
         jQuery(document).ready(function($) {
-		
+
 		 /* $('#grid').DataTable( {
           "ajax": "{{ url($menuUrl.'/ajax') }}",
 		  "columns": [
@@ -189,7 +189,7 @@
                     ],
 					"displayLength": {{ $noOfItems }}
           });*/
-		  
+
 
            var table = $('#grid').DataTable({
 

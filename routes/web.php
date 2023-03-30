@@ -47,6 +47,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('payments/ajax', 'AdminPaymentsController@getAjax');
     Route::get('payments/edit/{id}', 'AdminPaymentsController@edit');
     Route::post('payments/delete', 'AdminPaymentsController@postDelete');
+    Route::get('payments/export', 'AdminPaymentsController@export')->name('adminExportPayment');
     Route::get('payments/{type}', 'AdminPaymentsController@indexcustom');
     Route::resource('payments', 'AdminPaymentsController')->only(['index']);;
 
@@ -91,10 +92,13 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::post('users/addDay', 'AdminUsersController@addDay');
     Route::get('users/edit/{id}', 'AdminUsersController@edit');
     Route::get('users/active', 'AdminUsersController@getActiveUser');
+    Route::get('users/notActive', 'AdminUsersController@getNotActive');
+    Route::get('users/active/export', 'AdminUsersController@exportActiveUser')->name('exportActiveUser');
     Route::get('users/demo', 'AdminUsersController@getDemoUser');
+    Route::get('users/birthdays-upcoming', 'AdminUsersController@birthdaysUpcoming');
     Route::get('users/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
-    //client days 
+    //client days
     Route::get('users_days/freeze/{id}', 'AdminUsersController@getFreezeView');
     Route::get('users_days/unfreeze/{id}', 'AdminUsersController@getUnFreezeView');
     Route::post('users_days/freeze/{id}', 'AdminUsersController@freezeDays');
@@ -181,6 +185,15 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::resource('portions', 'AdminPortionsController')->only(['index']);;
 
 
+    Route::post('delivery_type/save', 'AdminDeliveryTypeController@store');
+    Route::post('delivery_type/delete', 'AdminDeliveryTypeController@postDelete');
+    Route::get('delivery_type/edit/{id}', 'AdminDeliveryTypeController@edit');
+    Route::get('delivery_type/delete/{id}', 'AdminDeliveryTypeController@destroy');
+    Route::get('delivery_type/add', 'AdminDeliveryTypeController@create');
+    Route::get('delivery_type/ajax', 'AdminDeliveryTypeController@getAjax');
+    Route::resource('delivery_type', 'AdminDeliveryTypeController')->only(['index']);;
+
+
     Route::post('addons/save', 'AdminAddonController@store');
     Route::post('addons/delete', 'AdminAddonController@postDelete');
     Route::get('addons/edit/{id}', 'AdminAddonController@edit');
@@ -195,6 +208,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
     Route::get('items/delete/{id}', 'AdminItemController@destroy');
     Route::get('items/add', 'AdminItemController@create');
     Route::get('items/ajax', 'AdminItemController@getAjax');
+    Route::get('items/export/{tt}', 'AdminItemController@export');
     Route::get('item-days', 'AdminItemController@getItemDays');
     Route::get('items/category/{id}', 'AdminItemController@chooseItemCategory');
     Route::get('items/choose/category/{item}/{category}', 'AdminItemController@chooseCategory');
@@ -369,6 +383,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['web', 'admin'])->group(
 
     Route::get('membership/{endDate}', 'MembershipDashboard@getEndDahsFilterDate');
     Route::get('membership/ajax', 'MembershipDashboard@getAjax');
+    Route::get('membership-export', 'MembershipDashboard@export')->name('adminExportMembership');
     Route::resource('membership', 'MembershipDashboard')->only(['index']);; //
 
     Route::get('membership_suspension/ajax', 'MembershipSuspensionController@getAjax');
@@ -585,6 +600,7 @@ Route::middleware(['web', 'authUser'])->group(function () {
 
     Route::post('kitchen/get-packaging', 'KitchenController@postGetPackaging');
     Route::get('kitchen/get-packaging', 'KitchenController@getGetPackaging');
+    Route::get('kitchen/report/pdf/{id}/pk', 'KitchenController@pkReportPDF')->name('pkReportPDF');
     Route::get('kitchen/get-packaging2', 'KitchenController@getPackagingPdf');
     Route::get('kitchen/approve-all/{id}', 'KitchenController@getApproveAll');
     Route::get('kitchen/user-menu/{id}', 'KitchenController@getUserMenu');

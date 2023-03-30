@@ -422,6 +422,7 @@ return [
     "Packaging" => "التغليف",
     "Labelling" => "ملصقات العلب",
     "Delivery" => "التوصيل",
+    "delivery_type" => "Delivery",
     "Clinic" => "العيادة",
     "Membership End" => "انتهاء العضوية",
     "Actions" => "الأوامر",

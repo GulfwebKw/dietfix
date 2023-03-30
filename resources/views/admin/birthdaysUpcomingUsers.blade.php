@@ -39,11 +39,11 @@
 
     <div class="table-toolbar">
 
-        <div class="btn-group pull-left">
-            <a id="grid_export" class="btn grey" href="{{ route('exportActiveUser') }}">
-                Export <i class="fa fa-file-excel-o"></i>
-            </a>
-        </div>
+{{--        <div class="btn-group pull-left">--}}
+{{--            <a id="grid_export" class="btn grey" href="{{ route('exportActiveUser') }}">--}}
+{{--                Export <i class="fa fa-file-excel-o"></i>--}}
+{{--            </a>--}}
+{{--        </div>--}}
     </div>
 
     <div class="clearfix"></div>
@@ -63,7 +63,7 @@
                 <th>{{trans('main.Mobile')}}</th>
                 <th>{{trans('main.Package')}}</th>
                 <th>Clinic</th>
-                <th>Remaining Days</th>
+                <th>Birthday</th>
                 <th>{{trans('main.Active')}}</th>
             </tr>
 
@@ -76,9 +76,9 @@
                     <td>{{$user->email}}</td>
                     <td>{{$user->phone}}</td>
                     <td>{{$user->mobile_number}}</td>
-                    <td>{{optional($user->package)->titleEn}}</td>
+                    <td>{{optional($user->package)->titleEn}}<hr><strong>Remaining:</strong><br>{{$user->membership_end }}<br>{{ Carbon\Carbon::parse($user->membership_end . ' 00:00:00')->diffForHumans()}}</td>
                     <td>{{optional($user->clinic)->titleEn}}</td>
-                    <td>{{$user->membership_end }}<br>{{ Carbon\Carbon::parse($user->membership_end . ' 00:00:00')->diffForHumans()}}</td>
+                    <td>{{$user->dob }}<br>{{ Carbon\Carbon::parse($user->dob . ' 00:00:00')->diffForHumans()}}</td>
                     <td>
                         <a href="/admin/users/renew-or-addmembership/{{$user->id}}" data-id="4280" class="nwrap btn btn-xs green btn-block "><i class="fa fa-print"></i> Renew/Add Membership</a>
                         <a href="/admin/users/orders/{{$user->id}}" data-id="{{$user->id}}" class="nwrap btn btn-xs red btn-block "><i class="fa fa-print"></i> Orders</a>
@@ -119,6 +119,7 @@
         jQuery(document).ready(function($) {
             var table = $('#grid').DataTable({
                 "processing": true,
+                "ordering": false,
                 "displayLength": {{ $noOfItems }},
                 "paginationType": "bootstrap_full_numbers",
                 "pagingType": "full_numbers",

@@ -52,9 +52,9 @@ class AdminPaymentsController extends AdminController
         $this->fields[] = array('title' => trans('main.InvoiceDisplayValue'), 'name' => 'InvoiceDisplayValue', 'width' => 50, 'grid' => true, 'type' => 'text');
         $this->fields[] = array('title' => trans('main.PaidCurrency'), 'name' => 'PaidCurrency', 'width' => 50, 'grid' => true, 'type' => 'text');
         $this->fields[] = array('title' => trans('main.Currency'), 'name' => 'Currency', 'width' => 50, 'grid' => true, 'type' => 'text');
-        
+
         $this->fields[] = array('title' => trans('main.Gift'), 'name' => 'gift_id', 'searched' => true, 'width' => 50, 'grid' => true, 'type' => 'div', 'col' => 3);
-        
+
         $this->fields[] = array('title' => trans('main.RefId'), 'name' => 'ref', 'grid' => true, 'width' => 50, 'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.RefId'), 'name' => 'ref_id', 'grid' => true, 'width' => 50, 'type' => 'text', 'col' => 2);
 
@@ -64,13 +64,14 @@ class AdminPaymentsController extends AdminController
         // Grid Buttons
         // $this->buts['add'] = array('name' =>'Add','icon' => 'plus', 'color' => 'green');
         //        $this->buts['edit'] = array('name' =>'Edit','icon' => 'edit', 'color' => 'blue');
-        
+
         $this->buts['paid'] = array('name' => 'Paid', 'icon' => 'list', 'color' => 'green');
         $this->buts['unpaid'] = array('name' => 'UnPaid', 'icon' => 'list', 'color' => 'red');
-        
+        $this->buts['export'] = array('name' =>'Export','icon' => 'file-excel-o', 'color' => 'grey');
+
 
         $this->gridButs = [];
-        
+
         $this->recordButs = [];
 
         $this->routeParams = [];
@@ -79,11 +80,38 @@ class AdminPaymentsController extends AdminController
         parent::__construct();
     }
 
+    public function export() {
+        $columns = [ // Set Column to be displayed
+            'ID' => 'id',
+            'User ID' => 'user_id',
+            trans('main.User Name') => function ($i ) { return optional($i->user)->username ; } ,
+            trans('main.Email Address') => function ($i ) { return optional($i->user)->email ; } ,
+            trans('main.Phone No.') =>  function ($i ) { return optional($i->user)->phone ; },
+            trans('main.Mobile') => function ($i ) { return optional($i->user)->mobile_number ; } ,
+            trans('main.Package') => function ($item) {
+                return optional($item->package)->titleEn;
+            },
+            'Package Duration' => function ($item) {
+                return optional($item->package)->package_duration_id;
+            },
+            trans('main.Paid') => function ($item) {
+                return ($item->paid == 1) ? trans('main.Yes') :  trans('main.No');
+            },
+            trans('main.Payment Type') => 'type',
+            trans('main.pay_way_type') => 'pay_way_type',
+            'Discount' => 'discount',
+            trans('main.InvoiceDisplayValue') => 'InvoiceDisplayValue',
+            'Ref' => 'ref',
+            trans('main.RefId') => 'ref_id',
+            trans('main.Gift') => 'gift_id',
+            trans('main.Created Date') => 'created_at',
+            trans('main.Updated Date') => 'updated_at',
+        ];
+        return getCsvExport(Payment::query()->with(['package','user'])->orderBy('id','desc'), $columns, 'Payment_report_');
+
+    }
     public function indexcustom(Request $request)
     {
-
-
- 
 
         foreach ($this->fields as $f) {
             if (isset($f['grid'])) {
@@ -165,13 +193,13 @@ class AdminPaymentsController extends AdminController
     }
     public function loadData($request='')
     {
-       
+
         $M = $this->model;
         $this->items = $M::with('user')->with('package');
         if(!empty($request->type) && $request->type=="paid"){
         $this->items = $this->items->where('status',1);
         }else if(!empty($request->type) && $request->type=="unpaid"){
-        $this->items = $this->items->where('status','!=',1);   
+        $this->items = $this->items->where('status','!=',1);
         }
 
         //search
@@ -190,7 +218,7 @@ class AdminPaymentsController extends AdminController
 					->orWhere('mobile_number',"like","%".$this->searchUser."%")
 					->orWhere("email","like","%".$this->searchUser."%");
                 });*/
-            
+
         }
         $this->items = $this->items->orderBy($this->sortBy, $this->sortType)->paginate(20);
     }

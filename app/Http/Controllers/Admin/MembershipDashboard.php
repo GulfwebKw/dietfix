@@ -70,6 +70,31 @@ class MembershipDashboard extends AdminController
         $this->customJS = "cpassets/js/mebership_dashboard.js";
         parent::__construct();
     }
+
+    public function export() {
+        $columns = [ // Set Column to be displayed
+            'ID' => 'id',
+            trans('main.User Name') => 'username',
+            trans('main.Phone No.') => 'phone' ,
+            'EndsBy' => function ($i ) { return optional($i->lastDay)->date ; } ,
+            'PackageAr' =>  function ($i ) { return optional($i->package)->titleAr ; },
+            'PackageEn' => function ($i ) { return optional($i->package)->titleEn ; } ,
+            'RoleAr' => function ($item) {
+                return optional($item->role)->roleNameAr;
+            },
+            'RoleEn' => function ($item) {
+                return optional($item->role)->roleNameEn;
+            },
+        ];
+        return getCsvExport(
+            User::with(['package','lastDay','role','dates'=>function($r){
+                $r->where('date','>=',date('Y-m-d'));
+            }])->whereHas('dates',function ($r){
+                $r->where('date','>=',date('Y-m-d'));
+            })
+            , $columns, 'membership_report_');
+
+    }
     public function getEndDahsFilterDate($date)
     {
        $first=User::with(['package','lastDay','role','dates'=>function($r){
@@ -123,8 +148,8 @@ class MembershipDashboard extends AdminController
         $userTB = DB::table('users');
         $users = $userTB->where('id', '=', $user_id)->select('email', 'membership_end')->get();
         //var_dump($rs);
-        $to;
-        $endDate;
+        $to = "";
+        $endDate = "";
         foreach($users AS $user)
         {
             $to = $user->email;
@@ -132,7 +157,7 @@ class MembershipDashboard extends AdminController
         }
         $subject = "Dietfix membership ending";
         $msg = "Hello,
-		
+
 		Your subscription with Dietfix ends on ".$endDate." .";
 
         // change the message header

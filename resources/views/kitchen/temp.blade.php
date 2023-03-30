@@ -31,13 +31,19 @@
         @endif
 
         {{' '.\Input::get('date')}}@if(!empty($order->user->packageone->{'title'.LANG})),{{($order->user->packageone->{'title'.LANG})}}@endif
+        <br>
+        Production : {{ date('Y-m-d' , strtotime(Input::get('date') . ' -'.$productionDay.' days ') ) }}
+        <br>
+        Expiry : {{ date('Y-m-d' , strtotime(Input::get('date') . ' +'.$expireDay.' days ') )  }}
 
         <br>
+        @if( $showIdOnPrint )
         <p>
             {!!  optional($order->user)->salt
                ."<br>".' ID:'.$order->user->id
             !!}
        </p>
+        @endif
         @if(!$order->addons->isEmpty())
             @php $addOnItem[$order->id]=[]; @endphp
             @foreach ($order->addons as $addon)

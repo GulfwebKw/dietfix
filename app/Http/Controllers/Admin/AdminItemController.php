@@ -65,6 +65,7 @@ class AdminItemController extends AdminController
         $this->buts['edit']   = array('name' =>'Edit','icon' => 'edit', 'color' => 'blue');
 		$this->buts['view']   = array('name' =>'Category','icon' => 'plus', 'color' => 'green');
         $this->buts['delete'] = array('name' =>'Delete','icon' => 'remove', 'color' => 'red');
+        $this->buts['export'] = array('name' =>'Export','icon' => 'file-excel-o', 'color' => 'grey');
 
         $this->gridButs    = [];
         $this->recordButs  = [];
@@ -112,22 +113,22 @@ class AdminItemController extends AdminController
     }
 
   public function chooseItemCategory(Request $request){
-	
+
 	$items = Item::where('id',$request->id)->with(["category","days"])->first();
 	$categories =  Category::where('id','<>',$items->category_id)->orderBy('ordering','asc')->select(['title'.LANG,'id'])->get();
     return view( 'admin.chooseItemcategory',['_pageTitle'=>'Categories For Items','items'=>$items,'categories'=>$categories]);
 	}
-	
+
   public function chooseCategory(Request $request){
 	 $itemId     = $request->item;
 	 $categoryId = $request->category;
-	 
+
 	 Cookie::queue("chosen_".$itemId."_".$categoryId,'selected',3600);
-	 
+
 	 $itemsOld     = Item::where('id',$itemId)->first();
 	 $itemdsAddonsLists = ItemAddons::where('item_id',$itemId)->get();
 	 $itemsDaysLists    = ItemDays::where('item_id',$itemId)->get();
-	 
+
 	 //upload image if
 
 	 if(!empty($itemsOld->photo) && file_exists(public_path().'/media/items/'.$itemsOld->photo)){
@@ -137,7 +138,7 @@ class AdminItemController extends AdminController
 		$newPath = public_path().'/media/items/'.$newfileName;
 		\File::copy($oldPath , $newPath);
 	 }
-	 
+
 	 $newitem = new Item;
 	 $newitem->titleAr  = $itemsOld->titleAr;
 	 $newitem->titleEn  = $itemsOld->titleEn;
@@ -159,7 +160,7 @@ class AdminItemController extends AdminController
 	   $newaddon->item_id  = $newitem->id;
 	   $newaddon->addon_id = $itemdsAddonsList->addon_id;
 	   $newaddon->save();
-	  }	 
+	  }
 	 }
 	 //days
 	 if(!empty($newitem->id) && !empty($itemsDaysLists) && count($itemsDaysLists)>0){
@@ -168,8 +169,26 @@ class AdminItemController extends AdminController
 	   $newday->item_id = $newitem->id;
 	   $newday->day_id  = $itemsDaysList->day_id;
 	   $newday->save();
-	  }	 
+	  }
 	 }
 	 return back()->with('success','A copy of the chosen item is added with new chosen category');
 	}
+
+
+    public function export(){
+        $columns = [ // Set Column to be displayed
+            'Item Code' => 'id',
+            'Arabic Title' => 'titleAr',
+            'English Title' => 'titleEn',
+            'Category' => function ($item) {
+                return $item->category->{'title'.LANG} ;
+            },
+            'Active' => function ($item) {
+                if ($item->active)
+                    return 'Yes';
+                return 'No';
+            }
+        ];
+        return getCsvExport(Item::query(), $columns, 'Items_report_');
+    }
 }

@@ -39,11 +39,11 @@
 
     <div class="table-toolbar">
 
-        <div class="btn-group pull-left">
-            <a id="grid_export" class="btn grey" href="{{ route('exportActiveUser') }}">
-                Export <i class="fa fa-file-excel-o"></i>
-            </a>
-        </div>
+{{--        <div class="btn-group pull-left">--}}
+{{--            <a id="grid_export" class="btn grey" href="{{ route('exportActiveUser') }}">--}}
+{{--                Export <i class="fa fa-file-excel-o"></i>--}}
+{{--            </a>--}}
+{{--        </div>--}}
     </div>
 
     <div class="clearfix"></div>
@@ -105,6 +105,7 @@
 
 
         </table>
+        {{ $users->links() }}
 
     </div>
 
@@ -120,8 +121,10 @@
             var table = $('#grid').DataTable({
                 "processing": true,
                 "displayLength": {{ $noOfItems }},
-                "paginationType": "bootstrap_full_numbers",
-                "pagingType": "full_numbers",
+                "searching": false,
+                "lengthChange": false,
+                "paging": false,
+                "info": false,
                 "language": {
                     "lengthMenu": "_MENU_ @lang('main.Records') ",
                     "search": '@lang('main.Search') : ',
