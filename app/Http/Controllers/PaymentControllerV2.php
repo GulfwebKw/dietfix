@@ -26,7 +26,6 @@ class PaymentControllerV2 extends MainController
 
     //protected $payStatic      = 'https://demo.myfatoorah.com/ie/';
     //TEST
-    /*
     protected $username       = 'demoApiuser@myfatoorah.com';
     protected $password       = 'Mf@12345678';
     protected $apiPath        = 'https://apidemo.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
@@ -35,17 +34,16 @@ class PaymentControllerV2 extends MainController
 
 	protected $callBackUrl = 'https://demo.dietfix.com/callBackPayment2';
     protected $errorUrl    = 'https://demo.dietfix.com/callBackPayment2';
-    */
+
     //LIVE
-
-    protected $username = 'ahmadmyfatoorah@gmail.com';
-    protected $password = 'ahmadmyfatoorah@2019';
-    protected $apiPath = 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
-    protected $apiCallBackUrl = 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/';
-    protected $apiTokenUrl = 'https://apikw.myfatoorah.com/Token';
-
-    protected $callBackUrl = 'https://dietfix.com/callBackPayment2';
-    protected $errorUrl    = 'https://dietfix.com/callBackPayment2';
+//    protected $username = 'ahmadmyfatoorah@gmail.com';
+//    protected $password = 'ahmadmyfatoorah@2019';
+//    protected $apiPath = 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
+//    protected $apiCallBackUrl = 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/';
+//    protected $apiTokenUrl = 'https://apikw.myfatoorah.com/Token';
+//
+//    protected $callBackUrl = 'https://dietfix.com/callBackPayment2';
+//    protected $errorUrl    = 'https://dietfix.com/callBackPayment2';
 
 
     public function getToken()
@@ -152,12 +150,12 @@ class PaymentControllerV2 extends MainController
             $user->sex = $request->sex;
             $change = true;
         }
-        
+
         if (isset($request->dob)) {
             $user->dob = $request->dob;
             $change = true;
         }
-        
+
         if (isset($request->weight) && ($user->weight == "" || $user->weight == null)) {
             $user->weight = $request->weight;
             $change = true;
@@ -273,7 +271,7 @@ class PaymentControllerV2 extends MainController
     }
     public function reNewSubscription(Request $request)
     {
-       
+
         try {
 
             $discount_amount  = !empty($request->discount_amount) ? $request->discount_amount : '0';
@@ -301,13 +299,13 @@ class PaymentControllerV2 extends MainController
            return $this->sendResponse(205, ['data' => [], 'message' =>'']);
            }
 		   */
-		   
+
 		    if (!empty($request->dob) || !empty($request->weight) || !empty($request->height)) {
-		   
+
 		    if (!empty($request->dob)) {
             $user->dob = $request->dob;
             }
-            
+
             if (!empty($request->weight)) {
                 $user->weight = $request->weight;
             }
@@ -340,14 +338,14 @@ class PaymentControllerV2 extends MainController
             if ($user->package_id == null || empty($user->package_id)) {
                 return $this->sendResponse(400, ['data' => [], 'message' => trans("main.You_must_first_subscribe_new_package!") . '-2']);
             }
-            
-           
+
+
             //////////////////////////////upgrade other package for future ///////////////////////////////////////////
             if (!empty($user->package_id) && !empty($request->package_id) && !empty($request->package_duration_id) && $user->package_id <> $request->package_id) {
                 $package         = Package::find($request->package_id);
                 $packageDuration = PackageDurations::find($request->package_duration_id);
-             
-                
+
+
                 Log::info("reNewSubscription: Request Package = ".$request->package_id.",User ID=".$user->id);
 
                 if (!isset($package) || !isset($packageDuration)) {
@@ -447,8 +445,8 @@ class PaymentControllerV2 extends MainController
                     }
                 }
             }
-            
-        
+
+
             ///////////////////////end upgrade package for future //////////////////////////////////////////////
             $package = Package::find($user->package_id);
 

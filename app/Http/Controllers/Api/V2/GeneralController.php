@@ -19,18 +19,18 @@ class GeneralController extends MainApiController
 
     //apply coupon
 	public function apply_coupon(Request $request){
-	$data = [];	
-	
+	$data = [];
+
 	$total       = !empty($request->total_amount)?$request->total_amount:'0';
 	$coupon_code = !empty($request->coupon_code)?$request->coupon_code:'0';
-	
+
 	if(empty($coupon_code)){
 	return  $this->sendResponse(400,['data'=>$data,'message'=>"Coupon code is missing"]);
 	}
 	if(empty($total)){
 	return  $this->sendResponse(400,['data'=>$data,'message'=>"Amount is missing"]);
 	}
-	
+
 	$curDate = date("Y-m-d");
 	$coupon = Discount::where('active',1)
 	                ->where('code',$coupon_code)
@@ -44,13 +44,20 @@ class GeneralController extends MainApiController
 	if(!empty($coupon->id) && strtotime($curDate)>strtotime($coupon->end)){
 	return  $this->sendResponse(400,['data'=>$data,'message'=>"Coupon code is already expired on ".$coupon->end]);
 	}
-	
+
 	if(!empty($coupon->id) && empty($coupon->count_limit)){
 	return  $this->sendResponse(400,['data'=>$data,'message'=>"Usage counts is exceeded.Please try another coupon code."]);
 	}
-	
-	
-	
+
+        if ($coupon->package > 0 and $coupon->package != $request->package_id ) {
+            return  $this->sendResponse(400, ['data' => $data, 'message' => "The coupon code is not valid for this package."]);
+        }
+        if ($coupon->package_duration > 0 and $coupon->package_duration != $request->package_duration_id ) {
+            return  $this->sendResponse(400, ['data' => $data, 'message' => "The coupon code is not valid for this package duration."]);
+        }
+
+
+
 	if(!empty($coupon->id) && $coupon->type=="KD"){
 	$discountAmt    = $coupon->value;
 	$discountAmttxt = number_format($discountAmt,3).'KD';
@@ -58,9 +65,9 @@ class GeneralController extends MainApiController
 	$discountAmt    = round(($total*$coupon->value)/100,3);
 	$discountAmttxt = number_format($discountAmt,3).'KD';
 	}
-	
+
 	$total = $total-$discountAmt;
-	
+
 	$data[]=[
 	                 'coupon_code'=>$coupon->code,
 					 'coupon_type'=>$coupon->type,
@@ -70,8 +77,8 @@ class GeneralController extends MainApiController
 	                 ];
 	return  $this->sendResponse(200,['data'=>$data,'message'=>"You have valid coupon code"]);
 	}
-	
-	
+
+
     public function getSlideShow(Request $request)
     {
 
@@ -81,8 +88,8 @@ class GeneralController extends MainApiController
             return  $this->sendResponse(200,['prefix_slider_photo'=>url(env('APP_URL').'/media/slideshow/'),'data'=>$data,'message'=>"","whatsapp"=>$whatsApp->value]);
         }
 		//
-		
-		
+
+
         return  $this->sendResponse(205,['data'=>$data,'message'=>"record not found ","whatsapp"=>$whatsApp->value]);
     }
     public function getAdvertising(Request $request)
@@ -136,14 +143,14 @@ class GeneralController extends MainApiController
     }
     public function getPackage(Request $request)
     {
- 
+
         $package=Package::with(['meals'=>function($r){
             $r->where('active',1);
         },'packageDurations'=>function($r){
             $r->where('active',1)->where('show_mobile',1);
         }])->where('show_mobile',1)->where('active',1)->whereId($request->id)->first();
-        
-      
+
+
         if(isset($package)){
             if(isset($package->photo)){
                 $package->photo = !empty($package->photo)?url('/media/packages/'.$package->photo):url('/images/no-image.jpg');

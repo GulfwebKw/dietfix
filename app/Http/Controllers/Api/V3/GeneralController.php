@@ -54,6 +54,13 @@ class GeneralController extends MainApiController
             return  $this->sendResponse(400, ['data' => $data, 'message' => "Usage counts is exceeded.Please try another coupon code."]);
         }
 
+        if ($coupon->package > 0 and $coupon->package != $request->package_id ) {
+            return  $this->sendResponse(400, ['data' => $data, 'message' => "The coupon code is not valid for this package."]);
+        }
+        if ($coupon->package_duration > 0 and $coupon->package_duration != $request->package_duration_id ) {
+            return  $this->sendResponse(400, ['data' => $data, 'message' => "The coupon code is not valid for this package duration."]);
+        }
+
 
 
         if (!empty($coupon->id) && $coupon->type == "KD") {
@@ -196,7 +203,7 @@ class GeneralController extends MainApiController
     }else{
     $arrays['recommended'] = [];
     }
-    
+
     //fast
     $list_fast=[];
     $list_fast= Package::with(['meals'=>function($r){

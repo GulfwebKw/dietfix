@@ -125,6 +125,54 @@
                     </div>
 
                     <div class="control-group form-group  col-sm-6" id="country_id_holder">
+                        <label for="package" class="control-label col-sm-4">Package</label>
+                        <div class="controls col-sm-8">
+                            <select name="package" id="package" class=" chosen-select" onchange="updateDuration();" >
+                                <option @if(old('package' , true ))  selected @endif value="-1">All Package</option>
+                                @foreach($packages as $package)
+                                <option @if($package->id == old('package'))  selected @endif value="{{ $package->id }}">
+                                    {{ $package->titleEn }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group form-group  col-sm-6" id="country_id_holder">
+                        <label for="package_duration" class="control-label col-sm-4">Duration</label>
+                        <div class="controls col-sm-8">
+                            <select name="package_duration" id="package_duration" class=" chosen-select" >
+                                <option @if(old('package_duration' , true ))  selected @endif value="-1">All Duration</option>
+                                @if(old('package' , false ))
+                                @foreach($packages as $package)
+                                    @if ( old('package' ) == $package->id)
+                                            @foreach($package->packageDurations as $duration)
+                                                <option @if($duration->id == old('package_duration'))  selected @endif value="{{ $duration->id }}">
+                                                    {{ $duration->titleEn }}
+                                                </option>
+                                            @endforeach
+                                    @endif
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+                    <script>
+                        var durationsOption = [];
+                        @foreach($packages as $package)
+                            durationsOption['{{ 'P'.$package->id }}'] = "";
+                            @foreach($package->packageDurations as $duration)
+                                durationsOption['{{ 'P'.$package->id }}'] = durationsOption['{{ 'P'.$package->id }}'] + '<option @if($duration->id == old('package_duration'))  selected @endif value="{{ $duration->id }}">{{ $duration->titleEn }} </option>';
+                            @endforeach
+                        @endforeach
+                        function updateDuration() {
+                            var packageId = $('#package').val();
+                            var durations = '<option @if(old('package_duration' , true ))  selected @endif value="-1">All Duration</option>';
+                            durations = durations + durationsOption['P' + packageId];
+                            $('#package_duration').html(durations).trigger("chosen:updated").trigger("liszt:updated");
+                        }
+                    </script>
+
+                    <div class="control-group form-group  col-sm-6" id="country_id_holder">
                         <label for="country_id" class="control-label col-sm-4">Type</label>
                         <div class="controls col-sm-8">
                             <select name="type" id="type" class=" chosen-select" >

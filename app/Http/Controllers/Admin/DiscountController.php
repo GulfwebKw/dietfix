@@ -34,6 +34,8 @@ class DiscountController extends AdminController
         $this->fields[] = array('title' => trans('main.Arabic Title'), 'name' => 'titleAr', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => trans('main.English Title'), 'name' => 'titleEn', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => "Discount Code", 'name' => 'code', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
+        $this->fields[] = array('title' => "Package", 'name' => 'package', 'searched' => false, 'width' => 20, 'grid' => false ,'type' => 'text', 'col' => 2);
+        $this->fields[] = array('title' => "Duration", 'name' => 'package_duration', 'searched' => true, 'width' => 20, 'grid' => false ,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => "Value", 'name' => 'value', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => "Limitation", 'name' => 'count_limit', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
         $this->fields[] = array('title' => "User Limitation", 'name' => 'count_limit_user', 'searched' => true, 'width' => 20, 'grid' => true ,'type' => 'text', 'col' => 2);
@@ -75,6 +77,7 @@ class DiscountController extends AdminController
         $M = $this->model;
 
         $this->beforSave();
+
 
 
         if (Input::get($this->_pk)) {
@@ -194,6 +197,10 @@ class DiscountController extends AdminController
 
         }
 
+        if ( $this->item->package == -1 )
+            $this->item->package = null ;
+        if ( $this->item->package_duration == -1 )
+            $this->item->package_duration = null ;
 
         $this->item->save();
 
@@ -283,11 +290,13 @@ class DiscountController extends AdminController
     public function create()
     {
         $this->grabOtherTables();
+        $packages = Package::all();
         return View::make('admin.discount.add')
             ->with( '_pageTitle' , trans('main.Add') . ' ' . $this->humanName )
             ->with( '_pk' , $this->_pk )
             ->with( 'url' , $this->saveurl )
             ->with( 'uploadable' , $this->uploadable )
+            ->with( 'packages' , $packages )
             ->with('fields',[]);
 
     }
@@ -306,12 +315,14 @@ class DiscountController extends AdminController
         $this->item = $M::where($this->_pk, $id)->first();
 
         $this->grabOtherTables();
+        $packages = Package::all();
         return View::make('admin.discount.edit')
             ->with( '_pageTitle' , trans('main.Edit') . ' ' . $this->humanName )
             ->with( '_pk' , $this->_pk )
             ->with( 'url' , $this->saveurl )
             ->with( 'uploadable' , $this->uploadable )
             ->with( 'item' , $this->item )
+            ->with( 'packages' , $packages )
             ->with('fields',[]);
     }
 
