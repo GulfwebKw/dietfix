@@ -66,9 +66,9 @@ class UserController extends MainApiController
            $user->api_token=$token;
            $user->save();
           // $sum = $this->getSumPoint($user->id);
-		  
+
         $res=$this->getPackageCountAndReferralPoint($user->id,$user->package_duration_id,$user->membership_start);
-		
+
 		//get last date of subscription
 		$datesInfo = DB::table('user_dates')->where('user_id',$user->id)->where('freeze',0)->orderBy('date','desc')->first();
 		$lastDate  = !empty($datesInfo->date)?$datesInfo->date:date('Y-m-d');
@@ -76,7 +76,7 @@ class UserController extends MainApiController
 		$is_future_subscription = 0;
 		$futureRenewInfo = DB::table('renew_future_package')->where('user_id',$user->id)->first();
 		if(!empty($futureRenewInfo->id)){ $is_future_subscription=1;}
-		
+
 		$newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
 		$newSubscriptionDate = !empty($newSubscriptionDate)?date('Y-m-d',strtotime($newSubscriptionDate)):'';
         return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate],'message'=>trans("main.login_success")]);
@@ -132,6 +132,8 @@ class UserController extends MainApiController
         $user->password=bcrypt($request->password);
         $user->country_id=120;
         $user->deviceType=$request->deviceType;
+        $user->building_number = $request->building_number ? $request->building_number : "" ;
+        $user->building_number_work = $request->building_number_work ? $request->building_number_work : "";
         if(isset($request->fcm_token)){
         $user->deviceToken=$request->fcm_token;
         }
@@ -233,6 +235,9 @@ class UserController extends MainApiController
                         if(isset($request->floor)){
                             $user->floor_work=$request->floor;
                         }
+                        if(isset($request->building_number)){
+                            $user->building_number_work=$request->building_number;
+                        }
                     }else{
 
                         if(isset($request->area_work)){
@@ -259,6 +264,9 @@ class UserController extends MainApiController
                         if(isset($request->floor_work)){
                             $user->floor_work=$request->floor_work;
                         }
+                        if(isset($request->building_number_work)){
+                            $user->building_number_work=$request->building_number_work;
+                        }
                     }
                     if(isset($request->username)){
                         $user->username=$request->username;
@@ -283,6 +291,9 @@ class UserController extends MainApiController
                     }
                     if(isset($request->floor)){
                         $user->floor=$request->floor;
+                    }
+                    if(isset($request->building_number)){
+                        $user->building_number=$request->building_number;
                     }
 //                    if(isset($request->mobile)){
 //                        $user->mobile=$request->mobile;
@@ -478,15 +489,15 @@ class UserController extends MainApiController
     {
       return  DB::table("referral_user")->where('user_id',$userId)->where('status',0)->count();
     }
-	
-	
-	
+
+
+
 	public function getGuestMeals(Request $request)
     {
         if(empty($request->day)){
 		return  $this->sendResponse(500,['data'=>[],'message'=>"Please choose starting date"]);
 		}
-		
+
 		if(empty($request->package_id)){
 		return  $this->sendResponse(500,['data'=>[],'message'=>"Please choose a package"]);
 		}
@@ -506,13 +517,13 @@ class UserController extends MainApiController
         }else{
             $dayId=null;
         }
-		
-		
-		
+
+
+
 		if(!empty($request->package_id)){
 		$packId=$request->package_id;
 		}
-		
+
 
         $cats=Package::with(["categories"=>function($r){
             $r->where('active',1);
@@ -524,7 +535,7 @@ class UserController extends MainApiController
             $catId=[];
         }
 
-        
+
         $result=Package::with(['meals'=>function($r){
                 $r->where('meals.active',1);
                },'meals.categories'=>function($e)use($catId,$dayId){
@@ -539,11 +550,11 @@ class UserController extends MainApiController
                     $q->where('active',1);
                   }])->whereId($packId)->first();
 
-       
+
         return  $this->sendResponse(200,['data'=>['prefix_photo_addons'=>url(env('APP_URL').'/media/addons/'),'prefix_photo_item'=>url(env('APP_URL').'/media/items/'),'meals'=>$result->meals],'message'=>""]);
 
     }
-	
+
     public function getMeals(Request $request)
     {
         $user=$this->getUser($request);
@@ -563,8 +574,8 @@ class UserController extends MainApiController
         }else{
             $dayId=null;
         }
-		
-		
+
+
 
         $day=UserDate::where('date',$request->day)->where('user_id',$user->id)->first();
 
@@ -577,17 +588,17 @@ class UserController extends MainApiController
         }else{
             $packId=$user->package_id;
         }
-        
+
 		/*
 		if(empty($packId)){
 		    $packId=$request->package_id;
 		}
 		*/
-		
+
 		if(!empty($request->package_id)){
 		$packId=$request->package_id;
 		}
-		
+
 
         $cats=Package::with(["categories"=>function($r){
             $r->where('active',1);
@@ -676,10 +687,10 @@ class UserController extends MainApiController
             }else{
                 $packId=$user->package_id;
             }
-            
-            
+
+
             if(!empty($this->isMealEmpty($males))){
-                return $this->sendResponse(400,['data'=>[],'message'=>'Make sure you have selected all required meals - 1']);   
+                return $this->sendResponse(400,['data'=>[],'message'=>'Make sure you have selected all required meals - 1']);
             }
             //check meals counts & request meals
             $totalMealsByPackage = DB::table('packages_meals')->where('package_id',$packId)->get()->count();
@@ -702,16 +713,16 @@ class UserController extends MainApiController
                 $unixTimestamp = strtotime($day->date);
                 $dayOfWeek = date("l", $unixTimestamp);
                 $dayId=Day::where('titleEn',$dayOfWeek)->first();
-				
+
                 //remove previous order
                // DB::table('orders')->where('user_id',$user->id)->where('date_id',$day->id)->delete();
-				
+
 				$this->logUserActivity("orders removed  userId==>".$user->id,null,$user->deviceType);
 
                 foreach ($males as $maleArray) {
                     if(array_key_exists('male_id',$maleArray) && array_key_exists('category_id',$maleArray)&& array_key_exists('item_id',$maleArray) && array_key_exists('addons',$maleArray)){
 
-                    $existOrders = Order::where('meal_id',$maleArray['male_id'])->where('user_id',$user->id)->where('date_id',$day->id)->first();   
+                    $existOrders = Order::where('meal_id',$maleArray['male_id'])->where('user_id',$user->id)->where('date_id',$day->id)->first();
                     if(!empty($existOrders->id)){
                         $existOrders->category_id=$maleArray['category_id'];
                         $existOrders->item_id=$maleArray['item_id'];
@@ -719,19 +730,19 @@ class UserController extends MainApiController
                         $existOrders->date_id=$day->id;
                         $existOrders->user_id=$user->id;
                         $existOrders->day_id=optional($dayId)->id;
-    
+
                         $portion= $this->selectPortion($user->id,$maleArray['male_id'],$packId);
                         if(isset($portion)){
                         $existOrders->portion_id=$portion;
                         }
-    
-    
+
+
                         $existOrders->save();
                         $orderId=$existOrders->id;
-                                    
+
                         $this->logUserActivity("set order for day ".$day->date." userId==>".$user->id,null,$user->deviceType);
-    
-                    }else{          
+
+                    }else{
                     $order=new Order();
                     $order->category_id=$maleArray['category_id'];
                     $order->item_id=$maleArray['item_id'];
@@ -748,7 +759,7 @@ class UserController extends MainApiController
 
                                 $order->save();
                                 $orderId=$order->id;
-								
+
                                 $this->logUserActivity("set order for day ".$day->date." userId==>".$user->id,null,$user->deviceType);
 
                             }
@@ -779,7 +790,7 @@ class UserController extends MainApiController
 
     }
 
-    
+
     public function isMealEmpty($males){
         $flag = 0;
         foreach ($males as $maleArray) {
@@ -789,7 +800,7 @@ class UserController extends MainApiController
         }
         return $flag;
     }
-	
+
     public function chooseRandomFood(Request $request)
     {
 
@@ -979,7 +990,7 @@ class UserController extends MainApiController
            $firstValidDay=$request->start_day;
 
             $user=$this->getUser($request);
-             
+
             $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
 
@@ -1013,10 +1024,10 @@ class UserController extends MainApiController
             if ($validator->fails()) {
                 return $this->sendResponse(400,['data'=>[],'message'=>$validator->errors()->first()]);
             }
-			
+
             $firstValidDay=$request->resume_date;
 			if(empty($firstValidDay)){
-                return $this->sendResponse(400,['data'=>[],'message'=>'Resume date is missing']);   
+                return $this->sendResponse(400,['data'=>[],'message'=>'Resume date is missing']);
             }
 			//check resume date should not override the available date
 			$resumeDay = UserDate::where('user_id',$user->id)->where('freeze',1)->orderBy('date','asc')->first();
@@ -1028,7 +1039,7 @@ class UserController extends MainApiController
 			return  $this->sendResponse(205,['data'=>[],'message'=>"Invalid resume date"]);
 			}
 			}
-			
+
             $countExistFreeze=UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('freeze',1)->get();
             $count = $countExistFreeze->count();
             if($count<=0){
@@ -1038,14 +1049,14 @@ class UserController extends MainApiController
 			foreach($countExistFreeze as $key=>$freezDate){
 			$newDay = date("Y-m-d",strtotime("+$key day", strtotime($firstValidDay)));
 			$existDay=UserDate::where('id',$freezDate->id)->first();
-			
+
 			//check date exist
 			$existDayE = UserDate::where('date',$newDay)->where('user_id',$user->id)->first();
 			if(!empty($existDayE->id)){
 			$existDayE->date           = NULL;
 			$existDayE->save();
 			}
-			
+
 			$existDay->date           = $newDay;
 			$existDay->freeze         = 0;
 			$existDay->package_id     = $freezDate->package_id;
@@ -1058,7 +1069,7 @@ class UserController extends MainApiController
             foreach($countExistFreeze as $key=>$freezDate){
                 $newDay = date("Y-m-d",strtotime("+$key day", strtotime($firstValidDay)));
                 //check date exist
-                
+
                 $existDayE = UserDate::where('date',$newDay)->where('user_id',$userId)->first();
                 if(!empty($existDayE->id)){
                 $existDayE->freeze         = 0;
@@ -1068,13 +1079,13 @@ class UserController extends MainApiController
                 $existDayE->isMealSelected = 0;
                 }
                 if(!empty($user->package_id) && empty($existDayE->package_id)){
-                    $existDayE->package_id = $user->package_id;    
+                    $existDayE->package_id = $user->package_id;
                     }
                 $existDayE->save();
                 }else{
-                $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();    
+                $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();
                 $existDayE->date           = $newDay;
-                $existDayE->freeze         = 0; 
+                $existDayE->freeze         = 0;
                 $existDayE->update_status  = 'user';
                 if(!empty($this->isOrderExist($existDayE->id,$userId))){
                 $existDayE->isMealSelected = 1;
@@ -1083,15 +1094,15 @@ class UserController extends MainApiController
                 }
 
                 if(!empty($user->package_id) && empty($existDayE->package_id)){
-                $existDayE->package_id = $user->package_id;    
+                $existDayE->package_id = $user->package_id;
                 }
 
                 $existDayE->save();
                 }
-                
+
                 $this->makeAdminLog("V3:unfreez by user-app ,PackageID=".$user->package_id." date==>".$newDay."-----".$freezDate->id."  userId==>".$userId,null,$userId,"unfreeze days  and attach days");
                 }
-    
+
                 $this->checkpendingdays($firstValidDay,$userId);
 
             return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id,$user->membership_start)],'message'=>trans('User date update successfully completed')]);
@@ -1104,7 +1115,7 @@ class UserController extends MainApiController
     }
 
     public function isOrderExist($id,$userId){
-        $order = Order::where('date_id',$id)->where('user_id',$userId)->get();  
+        $order = Order::where('date_id',$id)->where('user_id',$userId)->get();
         if(!empty($order) && count($order)>0){
         Order::where('date_id',$id)->where('user_id',$userId)->update(['freeze'=>0]);
         return true;
@@ -1112,23 +1123,23 @@ class UserController extends MainApiController
         return false;
         }
         }
-    
+
         public function checkpendingdays($firstValidDay,$userId){
             $countExistFreeze = UserDate::where('user_id',$userId)->where('date','<',$firstValidDay)->where('freeze',1)->get();
             if(!empty($countExistFreeze) && count($countExistFreeze)>0){
-                $lastDay=UserDate::where('date','>',$firstValidDay)->where('user_id',$userId)->where('freeze',0)->orderBy('date','desc')->first();    
+                $lastDay=UserDate::where('date','>',$firstValidDay)->where('user_id',$userId)->where('freeze',0)->orderBy('date','desc')->first();
                 foreach($countExistFreeze as $key=>$freezDate){
                     $keys = $key+1;
                     $newDay = date("Y-m-d",strtotime("+".$keys." day", strtotime($lastDay->date)));
-                    $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();    
+                    $existDayE = UserDate::where('id',$freezDate->id)->where('user_id',$userId)->first();
                     $existDayE->date           = $newDay;
-                    $existDayE->freeze         = 0; 
+                    $existDayE->freeze         = 0;
                     $existDayE->update_status  = 'admin';
                     $existDayE->save();
                 }
             }
         }
-        
+
     public function requestCashBack(Request $request)
     {
         try{
@@ -1203,12 +1214,12 @@ class UserController extends MainApiController
                 return $this->sendResponse(400,['data'=>[],'message'=>$validator->errors()->first()]);
             }
             $user=$this->getUser($request);
-			
+
 			if(empty($user->package_id)){
 			return $this->sendResponse(400,['data'=>[],'message'=>"Package is not available"]);
 			}
-			
-						
+
+
             $days=$request->days;
 
            $hasDupes= $this->hasDupes($days);
@@ -1440,12 +1451,12 @@ class UserController extends MainApiController
 
 
     }
-	
+
     public function helpMeChoosePackage(Request $request)
     {
 
         try{
-      
+
             $lisPackage=Package::whereIn('titleEn',['Full Plus','Full','Full Plus with Drinks','Fitness','LoCarb','Maternity','Kids','Diabetes','Weight Gain','Vegan','Detox','Keto','Lunch Meal','Dinner Meal','Breakfast and Lunch','Lunch and Dinner','Focus Breakfast','Youth Breakfast','4 High Protein Meals','3 High Protein Meals'])->where('active',1)->where('show_mobile',1)->get()->keyBy('titleEn')->toArray();
             $questionCat1=DB::table('questions')->where('catName','Gradual_Weight_Loss')->select(['id','titleEn','titleAr','yes_pack','no_pack'])->get()->toArray();
             $questionCat2=DB::table('questions')->where('catName','Fast_Weight_Loss')->select(['id','titleEn','titleAr','yes_pack','no_pack'])->get()->toArray();
@@ -1462,7 +1473,7 @@ class UserController extends MainApiController
                 $final1['Gradual_Weight_Loss'][$item->id]=$pac;
 
             }
-			
+
             $final2=[];
             foreach ($questionCat2 as $item2) {
                 $yesPackName = explode(',',$item2->yes_pack);
@@ -1474,7 +1485,7 @@ class UserController extends MainApiController
                 $final2['Fast_Weight_Loss'][$item2->id]=$pac;
 
             }
-			
+
 			$final3=[];
             foreach($questionCat3 as $item3) {
                 $yesPackName = explode(',',$item3->yes_pack);
@@ -1486,13 +1497,13 @@ class UserController extends MainApiController
                 $final3['Weight_Gain'][$item3->id]=$pac;
 
             }
-			
+
 			$final4=[];$specialArray = ['Maternity','Kids','Diabetes','LoCarb'];
 			$final4['Special_Cases'] = $this->selectPack($lisPackage,$specialArray);
-			
+
 			$final5=[];$singelMeal   = ['Lunch Meal','Dinner Meal','Breakfast and Lunch','Lunch and Dinner','Focus Breakfast','Youth Breakfast'];
 			$final5['Single_Meals']  = $this->selectPack($lisPackage,$singelMeal);
-			
+
             $res= array_merge($final1,$final2,$final3,$final4,$final5);
             if(count($res)>=1){
                 return  $this->sendResponse(200,['data'=>['questionsAndPackage'=>$res],'message'=>""]);
@@ -1950,15 +1961,15 @@ class UserController extends MainApiController
                 return $this->sendResponse(400,['data'=>[],'message'=>$validator->errors()->first()]);
             }
             $user=$this->getUser($request);
-			
+
 			if(empty($user->package_id) || empty($user->membership_start)){
 			return $this->sendResponse(400,['data'=>[],'message'=>"Package is not available"]);
 			}
-			
+
 			$today_date1 = date("Y-m-d");
             $today_date2 = strtotime("+3 day", strtotime($today_date1));
             $today_date3 = date("Y-m-d",$today_date2);
-			
+
 			//if date is les than starting date
 			if(!empty($user->membership_start) && !empty($request->day)){
 			$date1  = Carbon::createFromFormat('Y-m-d', $request->day);
@@ -1968,7 +1979,7 @@ class UserController extends MainApiController
 			return $this->sendResponse(400,['data'=>[],'message'=>"Chosen date is invalid-1"]);
 			}
 			}
-			
+
 			//if date is les than starting date
 			if(!empty($user->membership_start) && !empty($request->day)){
 			$date1  = Carbon::createFromFormat('Y-m-d', $request->day);
@@ -1978,9 +1989,9 @@ class UserController extends MainApiController
 			return $this->sendResponse(400,['data'=>[],'message'=>"Chosen date is invalid-2"]);
 			}
 			}
-			
-			
-			
+
+
+
             $day          = $request->day;
 			$userDateInfo = UserDate::where(['id'=>$request->old_day_id])->first();
             $userDate= UserDate::firstOrNew(['user_id'=>$user->id,'date'=>$day]);
@@ -1995,7 +2006,7 @@ class UserController extends MainApiController
 			UserDate::where('user_id',$user->id)->where('id',$request->old_day_id)->delete();
 			$this->logUserActivity("Old Date is removed-->".$user->id,null,$user->deviceType);
 			}
-			
+
             return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id),'day_id'=>$userDate->id],'message'=>trans('main.user_date_update_success')]);
 
         }catch (\Exception $e){
@@ -2142,13 +2153,13 @@ class UserController extends MainApiController
     private function getListUserDays($userId,$statingDate=null)
     {
         $udays =[];
-	
+
 		$res=DB::table('user_dates')->select(['id','date','freeze','isMealSelected'])->where('user_id',$userId);
         if($statingDate!=null){
             $res=$res->where('date','>=',$statingDate);
         }
         return $res->orderBy('date','asc')->get()->toArray();
-		  
+
     }
     private function updateAvgItem($id){
         $res= DB::table('rating_food')->where('item_id',$id)->avg('rating');
@@ -2262,7 +2273,7 @@ class UserController extends MainApiController
    private function hasDupes($array) {
         return count($array) !== count(array_unique($array));
     }
-   
+
    /////////////////////////////////////////////////////////////////////Imtiaz////////////////////////////////////////////
    public function chooseRandomFoodByDate(Request $request)
     {
@@ -2417,23 +2428,23 @@ class UserController extends MainApiController
         }
 
     }
-  	
+
    /////////////////////////////////////////////////////////////////////Imtiaz End///////////////////////////////////////////////
 
 
   private function getValidRenewPackageRequestDate($userid)
     {
-        
+
 		$lastDayDate  = UserDate::where('user_id',$userid)->where('freeze',0)->orderBy('date','desc')->select(['date'])->first();
-		
-		
+
+
 		$todayDate = date('Y-m-d');
-		
+
 		if(!empty($lastDayDate->date) && $lastDayDate->date > $todayDate){
-		
-		
+
+
 		$days = $this->daysFromDates($todayDate,$lastDayDate->date);
-		
+
 		if($days >= 3){
 		$firstValidDate = date('Y-m-d H:i:s', strtotime($lastDayDate->date . ' +1 day'));
 		}else if($days == 2){
@@ -2447,7 +2458,7 @@ class UserController extends MainApiController
 		$firstValidDate = date('Y-m-d H:i:s', strtotime($todayDate . ' +3 day'));
 		}
         return $firstValidDate;
-		
+
     }
 
 
@@ -2458,6 +2469,6 @@ class UserController extends MainApiController
 		$days      = $interval->format('%a');
 		return $days;
     }
-	
+
 
 }

@@ -136,6 +136,8 @@ class UserController extends MainApiController
         $user->password = bcrypt($request->password);
         $user->country_id = 120;
         $user->deviceType = $request->deviceType;
+        $user->building_number = $request->building_number ? $request->building_number : "" ;
+        $user->building_number_work = $request->building_number_work ? $request->building_number_work : "";
         if (isset($request->fcm_token)) {
             $user->deviceToken = $request->fcm_token;
         }
@@ -234,6 +236,9 @@ class UserController extends MainApiController
                 if (isset($request->floor)) {
                     $user->floor_work = $request->floor;
                 }
+                if (isset($request->building_number)) {
+                    $user->building_number_work = $request->building_number;
+                }
             } else {
 
                 if (isset($request->area_work)) {
@@ -260,6 +265,9 @@ class UserController extends MainApiController
                 if (isset($request->floor_work)) {
                     $user->floor_work = $request->floor_work;
                 }
+                if (isset($request->building_number_work)) {
+                    $user->building_number_work = $request->building_number_work;
+                }
             }
             if (isset($request->username)) {
                 $user->username = $request->username;
@@ -284,6 +292,9 @@ class UserController extends MainApiController
             }
             if (isset($request->floor)) {
                 $user->floor = $request->floor;
+            }
+            if (isset($request->building_number)) {
+                $user->building_number = $request->building_number;
             }
             //                    if(isset($request->mobile)){
             //                        $user->mobile=$request->mobile;
@@ -633,8 +644,8 @@ class UserController extends MainApiController
         }
         return  $this->sendResponse(205, ['data' => [], 'message' => trans('main.user_not_subscribe')]);
     }
-    
-    
+
+
     public function saveItem(Request $request)
     {
 
@@ -682,17 +693,17 @@ class UserController extends MainApiController
                 // DB::table('orders')->where('user_id',$user->id)->where('date_id',$day->id)->delete();
 
                 $this->logUserActivity("orders removed  userId==>" . $user->id, null, $user->deviceType);
-                
+
                 //check valid item for a day
-                
+
                 /*
                 $itemstatus = $this->checkvaliddayforitem($males,optional($dayId)->id);
-                
+
                 if(empty($itemstatus['status'])){
                      return $this->sendResponse(400, ['data' => [], 'message' => 'One of the item is found wrong assigned item_id='.$itemstatus['item_id'].',day_id'.$itemstatus['day_id']]);
                 }
                 */
-                
+
 
                 foreach ($males as $maleArray) {
                     if (array_key_exists('male_id', $maleArray) && array_key_exists('category_id', $maleArray) && array_key_exists('item_id', $maleArray) && array_key_exists('addons', $maleArray)) {
@@ -758,19 +769,19 @@ class UserController extends MainApiController
             return $this->sendResponse(500, ['data' => [], 'message' => $e->getMessage()]);
         }
     }
-    
-    
+
+
     //check item assign for the day or not
     public function checkvaliddayforitem($meals,$day_id){
          foreach ($meals as $maleArray) {
                 if (array_key_exists('male_id', $maleArray) && array_key_exists('category_id', $maleArray) && array_key_exists('item_id', $maleArray) && array_key_exists('addons', $maleArray)){
-                       $days = ItemDays::where('day_id',$day_id)->where('item_id',$maleArray['item_id'])->first(); 
+                       $days = ItemDays::where('day_id',$day_id)->where('item_id',$maleArray['item_id'])->first();
                        if(empty($days->id)){
                            return ['status'=>false,'day_id'=>$day_id,'item_id'=>$maleArray['item_id']];
-                       }    
+                       }
                 }
          }
-         
+
          return ['status'=>true,'day_id'=>'','item_id'=>''];
     }
 
@@ -1041,7 +1052,7 @@ class UserController extends MainApiController
                         $existDayE->isMealSelected = 0;
                     }
                     if(!empty($user->package_id) && empty($existDayE->package_id)){
-                        $existDayE->package_id = $user->package_id;    
+                        $existDayE->package_id = $user->package_id;
                         }
 
                     $existDayE->save();
@@ -1057,7 +1068,7 @@ class UserController extends MainApiController
                     }
 
                     if(!empty($user->package_id) && empty($existDayE->package_id)){
-                        $existDayE->package_id = $user->package_id;    
+                        $existDayE->package_id = $user->package_id;
                         }
 
                     $existDayE->save();
