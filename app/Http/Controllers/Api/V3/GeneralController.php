@@ -190,7 +190,10 @@ class GeneralController extends MainApiController
     $list_recommend= Package::with(['meals'=>function($r){
         $r->where('active',1);
     },'packageDurations'=>function($r){
-        $r->where('active',1)->where('show_mobile',1)->where('count_day','>=',20)->orderBy('count_day','desc');
+        $r->where('active',1)
+            ->where('show_mobile',1)
+            //->where('count_day','>=',20)
+            ->orderBy('count_day','desc');
     }])->where("show_mobile",1)->where('active',1)->where('package_type','recommended')->get();
     if($list_recommend->count()>=1){
         $list_recommend->map(function ($item){
