@@ -1162,6 +1162,9 @@ class PaymentControllerV2 extends MainController
             if (isset($request->floor)) {
                 $user->floor_work = $request->floor;
             }
+            if (isset($request->building_number)) {
+                $user->building_number_work = $request->building_number;
+            }
         } else {
 
             if (isset($request->area_work)) {
@@ -1188,6 +1191,9 @@ class PaymentControllerV2 extends MainController
             if (isset($request->floor_work)) {
                 $user->floor_work = $request->floor_work;
             }
+            if (isset($request->building_number_work)) {
+                $user->building_number_work = $request->building_number_work;
+            }
         }
         if (isset($request->username)) {
             $user->username = $request->username;
@@ -1212,6 +1218,9 @@ class PaymentControllerV2 extends MainController
         }
         if (isset($request->floor)) {
             $user->floor = $request->floor;
+        }
+        if (isset($request->building_number)) {
+            $user->building_number = $request->building_number;
         }
 
         if (isset($request->fullname)) {
