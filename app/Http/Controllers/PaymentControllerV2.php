@@ -629,7 +629,8 @@ class PaymentControllerV2 extends MainController
                         $t = explode("?", $ref_Ex["PaymentMethodUrl"]);
                         if (is_array($t)) {
                             $res = str_replace("invoiceKey=", "", explode("&", $t[1]));
-                            $referenceId =  $res[0];
+                            //$referenceId =  $res[0];
+                            $referenceId = $json1['Id'];
                             curl_close($soap_do);
                             return [$referenceId, $RedirectUrl, $ref_Ex, $post_string];
                         }
