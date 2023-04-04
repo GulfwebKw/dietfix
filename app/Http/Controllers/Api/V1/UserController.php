@@ -200,7 +200,7 @@ class UserController extends MainApiController
 
                 try{
 
-                    $validator = Validator::make($request->all(),['username'=>'nullable|unique:users,username,'.auth()->user()->id,'mobile_number'=>'unique:users,phone,'.auth()->user()->id,'is_weekend_address_same'=>'required|in:0,1']);
+                    $validator = Validator::make($request->all(),['username'=>'nullable|unique:users,username,'.auth()->user()->id,'mobile_number'=>'unique:users,phone,'.auth()->user()->id,'is_weekend_address_same'=>'required|in:0,1', 'delivery_type' => 'nullable|exists:delivery_type,id']);
                     if ($validator->fails()) {
                         return $this->sendResponse(400,['data'=>[],'message'=>$validator->errors()->first()]);
                     }
@@ -298,6 +298,9 @@ class UserController extends MainApiController
 //                    }
                     if(isset($request->fullname)){
                         $user->fullname=$request->fullname;
+                    }
+                    if (isset($request->delivery_type)) {
+                        $user->delivery_type = $request->delivery_type;
                     }
 
                     $user->save();

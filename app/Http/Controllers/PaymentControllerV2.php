@@ -110,7 +110,7 @@ class PaymentControllerV2 extends MainController
 
 
 
-        $validator = Validator::make($request->all(), ['package_id' => 'required', 'package_duration_id' => 'required', 'api_token' => 'required', 'starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate", 'email' => 'nullable|email', 'sex' => 'nullable|in:Male,Female']);
+        $validator = Validator::make($request->all(), ['package_id' => 'required', 'package_duration_id' => 'required', 'api_token' => 'required', 'starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate", 'email' => 'nullable|email', 'sex' => 'nullable|in:Male,Female', 'delivery_type' => 'nullable|exists:delivery_type,id']);
         if ($validator->fails()) {
             return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
         }
@@ -162,6 +162,10 @@ class PaymentControllerV2 extends MainController
         }
         if (isset($request->height) && ($user->height == "" || $user->height == null)) {
             $user->height = $request->height;
+            $change = true;
+        }
+        if (isset($request->delivery_type) && ($user->delivery_type == "" || $user->delivery_type == null)) {
+            $user->delivery_type = $request->delivery_type;
             $change = true;
         }
         if ($change) {
@@ -279,6 +283,11 @@ class PaymentControllerV2 extends MainController
 
             $user = $this->getUser($request);
 
+            $validator = Validator::make($request->all(), ['starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate", 'delivery_type' => 'nullable|exists:delivery_type,id']);
+            if ($validator->fails()) {
+                return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
+            }
+
             $today     = date('Y-m-d');
             //$date      = strtotime("+3 day",strtotime($today));
             $firstDate = date('Y-m-d', strtotime($today . ' + 3 days'));
@@ -312,16 +321,14 @@ class PaymentControllerV2 extends MainController
             if (!empty($request->height)) {
                 $user->height = $request->height;
             }
+            if (!empty($request->delivery_type)) {
+                $user->delivery_type = $request->delivery_type;
+            }
             $user->save();
 		    }
 
             $for_future = $this->forFuture($user->id);
 
-
-            $validator = Validator::make($request->all(), ['starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate"]);
-            if ($validator->fails()) {
-                return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
-            }
 
             $lastDayReservation = UserDate::where('user_id', $user->id)->where('freeze', 0)->orderBy('date', 'desc')->select(['date'])->first();
 
@@ -1097,7 +1104,8 @@ class PaymentControllerV2 extends MainController
                 'email'         => 'nullable',
                 'sex'           => 'required|in:Male,Female',
                 'height'        => 'required',
-                'weight'        => 'required'
+                'weight'        => 'required',
+                'delivery_type' => 'nullable|exists:delivery_type,id'
             ]
         );
 
@@ -1133,6 +1141,9 @@ class PaymentControllerV2 extends MainController
         }
         if (!empty($request->height)) {
             $user->height = $request->height;
+        }
+        if (!empty($request->delivery_type)) {
+            $user->delivery_type = $request->delivery_type;
         }
 
         $e = intval($request->is_weekend_address_same);

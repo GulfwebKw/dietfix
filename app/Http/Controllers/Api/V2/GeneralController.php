@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\MainApiController;
 use App\Models\App\AppAdvertising;
 use App\Models\App\AppSlideShow;
 use App\Models\Clinic\Package;
+use App\Models\Delivery;
 use App\Models\Frontend\UserContact;
 use App\Models\Setting;
 use App\Models\Discount;
@@ -214,6 +215,17 @@ class GeneralController extends MainApiController
 
 
     }
+
+
+    public function getDeliveryType()
+    {
+        $res=  Delivery::all();
+        if($res->count()>=1){
+            return  $this->sendResponse(200,['data'=>$res,'message'=>'']);
+        }
+        return  $this->sendResponse(205,['data'=>[],'message'=>""]);
+    }
+
     public function getArea(Request $request)
     {
         $id=$request->id;
