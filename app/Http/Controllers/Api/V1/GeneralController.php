@@ -8,6 +8,7 @@ use App\Models\App\AppSlideShow;
 use App\Models\Clinic\Package;
 use App\Models\Delivery;
 use App\Models\Frontend\UserContact;
+use App\Models\User;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -149,6 +150,11 @@ class GeneralController extends MainApiController
             return  $this->sendResponse(200,['data'=>$res,'message'=>'']);
         }
         return  $this->sendResponse(205,['data'=>[],'message'=>""]);
+    }
+    public function checkMobileNumberExist(Request  $request)
+    {
+        $exist =  User::query()->where('mobile_number' , $request->mobile_number)->exists();
+        return  $this->sendResponse(200,['data'=>['exist' => $exist],'message'=>""]);
     }
 
     public function getArea(Request $request)

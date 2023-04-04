@@ -20,6 +20,7 @@ Route::prefix('v3')->namespace('Api\V3')->group(function () {
     Route::get('/areas', 'GeneralController@getAreas');
     Route::get('/area', 'GeneralController@getArea');
     Route::get('/delivery/types', 'GeneralController@getDeliveryType');
+    Route::post('/checkMobileNumberExist', 'GeneralController@checkMobileNumberExist');
     Route::get('/provinces', 'GeneralController@getProvinces');
     Route::get('/province', 'GeneralController@getProvince');
     Route::get('/temp', 'UserController@temp');
@@ -111,6 +112,7 @@ Route::prefix('v2')->namespace('Api\V2')->group(function () {
     Route::get('/areas', 'GeneralController@getAreas');
     Route::get('/area', 'GeneralController@getArea');
     Route::get('/delivery/types', 'GeneralController@getDeliveryType');
+    Route::post('/checkMobileNumberExist', 'GeneralController@checkMobileNumberExist');
     Route::get('/provinces', 'GeneralController@getProvinces');
     Route::get('/province', 'GeneralController@getProvince');
     Route::get('/temp', 'UserController@temp');
@@ -197,6 +199,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::get('/areas', 'GeneralController@getAreas');
     Route::get('/area', 'GeneralController@getArea');
     Route::get('/delivery/types', 'GeneralController@getDeliveryType');
+    Route::post('/checkMobileNumberExist', 'GeneralController@checkMobileNumberExist');
     Route::get('/provinces', 'GeneralController@getProvinces');
     Route::get('/province', 'GeneralController@getProvince');
     Route::get('/temp', 'UserController@temp');
