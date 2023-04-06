@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::any('/testfirebase', 'Api\GeneralController@testfirebase');
+Route::any('/testfirebase', 'Api\V1\GeneralController@testfirebase');
 //V3
 Route::prefix('v3')->namespace('Api\V3')->group(function () {
     Route::get('/slideshow', 'GeneralController@getSlideShow');
