@@ -189,4 +189,9 @@ class GeneralController extends MainApiController
         return bcrypt("123456789");
     }
 
+    public function testfirebase(Request $request)
+    {
+        return \response()->json(['data' => $this->sendFcmNotification($request->title,$request->title,$request->message,$request->message,$request->token) ,'message'=>'']);
+    }
+
 }
