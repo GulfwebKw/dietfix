@@ -53,7 +53,7 @@ class MainApiController extends Controller
 
         $url = "https://fcm.googleapis.com/fcm/send";
         $serverKey =env('SERVER_KEY');
-        $notification = array('title' =>$titleEn,'text' =>$contentEn, 'sound' => 'default', 'badge' => '1');
+        $notification = array('title' =>$titleEn,'body' =>$contentEn,'text' =>$contentEn, 'sound' => 'default', 'badge' => '1');
         $arrayToSend = array('to' => $token, 'notification' => $notification,'priority'=>'high');
         $json = json_encode($arrayToSend);
         $headers = array();
@@ -62,6 +62,7 @@ class MainApiController extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
 //Send the request

@@ -191,7 +191,8 @@ class GeneralController extends MainApiController
 
     public function testfirebase(Request $request)
     {
-        $this->sendFcmNotification($request->title,$request->title,$request->message,$request->message,$request->token);
+        $response = $this->sendFcmNotification($request->title,$request->title,$request->message,$request->message,$request->token);
+        return  $this->sendResponse(200,['data'=>['is_sent'=>$response],'message'=>'']);
     }
 
 }
