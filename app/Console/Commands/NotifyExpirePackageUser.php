@@ -99,15 +99,15 @@ class NotifyExpirePackageUser extends Command
                              We would like to inform you that you have subscribed to the Diet Fix diet
                          will end
                          ".$date."
-                         What would you like to renew? We have great offers for renewal";			
+                         What would you like to renew? We have great offers for renewal";
 		    $this->sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$item);
 			}
-			
+
         }else{
             Log::info("not valid Mobile For Notify ===>$mobile"."---->".date('Y-m-d'));
         }
-		
-		
+
+
     }
     private function getValidEndDayForNotify()
     {
@@ -132,13 +132,13 @@ class NotifyExpirePackageUser extends Command
     }
     private function getValidUser($date){
 
-        
+
         $first=User::with(['package','lastDay','role','dates'=>function($r){
             $r->where('date','>=',date('Y-m-d'));
         }])->whereHas('dates',function ($r){
             $r->where('date','>=',date('Y-m-d'));
         })->get();
-		
+
 
         $arr=[];
         foreach ($first as $item) {
@@ -176,20 +176,20 @@ class NotifyExpirePackageUser extends Command
 	private function sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$item)
     {
 
-     
+
 	    $arrayToken=[];
         if(!empty($item->id)){
                     \DB::table('notifications')->insert(['user_id'=>$item->id,'titleEn'=>$titleEn,'contentEn'=>$contentEn,'titleAr'=>$titleAr,'contentAr'=>$contentAr]);
                     array_push($arrayToken,$item->deviceToken);
-              
+
         }
         if(count($arrayToken)>=1){
            $splitedArray = array_chunk($arrayToken,1000);
             foreach($splitedArray as $v){
-                if(!empty($v)){ 
+                if(!empty($v)){
                 $url = "https://fcm.googleapis.com/fcm/send";
                 $serverKey =env('SERVER_KEY');
-                $notification = array('title' =>$titleEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
+                $notification = array('title' =>$titleEn ,'body' =>$contentEn, 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
                 $arrayToSend = array('registration_ids' =>$v,'notify_type'=>'regular','notification' => $notification,'priority'=>'high','data'=>['notify_type'=>'regular']);
                 $json = json_encode($arrayToSend);
                 $headers = array();
@@ -199,11 +199,12 @@ class NotifyExpirePackageUser extends Command
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
                 //Send the request
                 $response = curl_exec($ch);
-				
+
                 //Close request
                  curl_close($ch);
                 }

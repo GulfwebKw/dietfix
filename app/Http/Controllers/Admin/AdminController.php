@@ -326,7 +326,7 @@ class AdminController extends Controller
         }
 
         $many_relations = [];
-      
+
       if(isset($request->is_weekend_address_same)){
        $this->item->is_weekend_address_same = !empty($request->is_weekend_address_same)?$request->is_weekend_address_same:0;
       }
@@ -855,11 +855,11 @@ class AdminController extends Controller
         if(count($arrayToken)>=1){
             $splitedArray = array_chunk($arrayToken,1000);
             foreach($splitedArray as $v){
-                if(!empty($v)){ 
-           
+                if(!empty($v)){
+
                 $url = "https://fcm.googleapis.com/fcm/send";
                 $serverKey =env('SERVER_KEY');
-                $notification = array('title' =>$titleEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
+                $notification = array('title' =>$titleEn ,'body' =>$contentEn, 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
                 $arrayToSend = array('registration_ids' =>$v,'notify_type'=>'regular','notification' => $notification,'priority'=>'high','data'=>['notify_type'=>'regular']);
                 $json = json_encode($arrayToSend);
                 //echo $json;exit;
@@ -870,19 +870,20 @@ class AdminController extends Controller
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
                 //Send the request
                 $response = curl_exec($ch);
                 //Close request
                  curl_close($ch);
-             
 
-            
+
+
                 }
             }
           return true;
-          
+
         }
         return false;
     }
@@ -896,13 +897,13 @@ class AdminController extends Controller
         if(!empty($user->id)){
             \DB::table('notifications')->insert(['user_id'=>$user->id,'titleEn'=>$titleEn,'contentEn'=>$contentEn,'titleAr'=>$titleAr,'contentAr'=>$contentAr]);
              array_push($arrayToken,$user->deviceToken);
-          
+
         }
         if(count($arrayToken)>=1){
             foreach ($arrayToken as $item) {
                 $url = "https://fcm.googleapis.com/fcm/send";
                 $serverKey =env('SERVER_KEY');
-                $notification = array('title' =>$titleEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
+                $notification = array('title' =>$titleEn,'body' =>$contentEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
                 $arrayToSend = array('to' =>$item,'notify_type'=>'regular','notification' => $notification,'priority'=>'high','data'=>['notify_type'=>'regular']);
                 $json = json_encode($arrayToSend);
                 $headers = array();
@@ -913,6 +914,7 @@ class AdminController extends Controller
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
                 //Send the request
                 $response = curl_exec($ch);

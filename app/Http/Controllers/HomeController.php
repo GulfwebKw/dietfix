@@ -51,7 +51,7 @@ public function addprogress($userId,$countday){
         $progressweek->save();
     }
 }
-   
+
    public function getrandmeals(){
         $res= DB::table('meals')
         ->join('categories','meals.id','=','categories.meal_id')
@@ -62,7 +62,7 @@ public function addprogress($userId,$countday){
         ->where('items.active',1)
         ->whereIn('categories.id',[1,2,5,6,12])
         ->orderBy('items.most_order','desc')
-        ->select(['items.id as item_id','categories.id as category_id'])->first(); 
+        ->select(['items.id as item_id','categories.id as category_id'])->first();
         dd($res);
     }
 
@@ -189,25 +189,25 @@ public function addprogress($userId,$countday){
 
  public function sendPushNotification()
     {
-       
+
 	   $item = User::where('id','4503')->first();
-	   
+
 	   $titleAr="test";
 	   $titleEn="test";
 	   $contentAr="test details";
 	   $contentEn="test Details";
-     
+
 	    $arrayToken=[];
         if(!empty($item->id)){
                     ///\DB::table('notifications')->insert(['user_id'=>$item->id,'titleEn'=>$titleEn,'contentEn'=>$contentEn,'titleAr'=>$titleAr,'contentAr'=>$contentAr]);
                     array_push($arrayToken,$item->deviceToken);
-              
+
         }
         if(count($arrayToken)>=1){
             foreach ($arrayToken as $item) {
                 $url = "https://fcm.googleapis.com/fcm/send";
                 $serverKey =env('SERVER_KEY');
-                $notification = array('title' =>$titleEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
+                $notification = array('title' =>$titleEn,'body' =>$contentEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
                 $arrayToSend = array('to' =>$item,'notify_type'=>'regular','notification' => $notification,'priority'=>'high','data'=>['notify_type'=>'regular']);
                 $json = json_encode($arrayToSend);
                 $headers = array();
@@ -218,10 +218,11 @@ public function addprogress($userId,$countday){
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
                 //Send the request
                 $response = curl_exec($ch);
-				
+
                 //Close request
                  curl_close($ch);
 

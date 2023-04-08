@@ -43,7 +43,7 @@ class NotifyBirthDayWishUser extends Command
         $this->notify();
 
     }
-   
+
     public function notify(){
    //send push notification
             $curDate = date("Y-m-d");
@@ -52,21 +52,21 @@ class NotifyBirthDayWishUser extends Command
 			$titleAr   = "DietFix أتمنى لك عيد ميلاد سعيد";
 			$titleEn   = "DietFix wish you happy birthday";
 			$contentAr = "في عيد ميلادك أتمنى لك التوفيق والسعادة التي لا تنتهي!. أتمنى لك عيد ميلاد رائع!";
-			$contentEn = "On your birthday I wish you success and endless happiness!.Wishing you an awesome birthday!";			
+			$contentEn = "On your birthday I wish you success and endless happiness!.Wishing you an awesome birthday!";
 		    $this->sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$item);
 			}
-		
+
     }
-  
+
 
    ///send mobile push notificatiojn
 	private function sendPushNotification($titleAr,$titleEn,$contentAr,$contentEn,$items)
     {
 
-     
+
 	    $arrayToken=[];
         if(!empty($items) && count($items)>0){
-		foreach($items as $item){	   
+		foreach($items as $item){
           \DB::table('notifications')->insert(['user_id'=>$item->id,'titleEn'=>$titleEn,'contentEn'=>$contentEn,'titleAr'=>$titleAr,'contentAr'=>$contentAr]);
           array_push($arrayToken,$item->deviceToken);
 		 }
@@ -75,7 +75,7 @@ class NotifyBirthDayWishUser extends Command
             foreach ($arrayToken as $item) {
                 $url = "https://fcm.googleapis.com/fcm/send";
                 $serverKey =env('SERVER_KEY');
-                $notification = array('title' =>$titleEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
+                $notification = array('title' =>$titleEn ,'body' =>$contentEn , 'text' =>$contentEn, 'sound' => 'default', 'badge' => '1','Notifications_type'=>'regular','data'=>['notify_type'=>'regular']);
                 $arrayToSend = array('to' =>$item,'notify_type'=>'regular','notification' => $notification,'priority'=>'high','data'=>['notify_type'=>'regular']);
                 $json = json_encode($arrayToSend);
                 $headers = array();
@@ -85,11 +85,12 @@ class NotifyBirthDayWishUser extends Command
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
                 //Send the request
                 $response = curl_exec($ch);
-				
+
                 //Close request
                  curl_close($ch);
 
