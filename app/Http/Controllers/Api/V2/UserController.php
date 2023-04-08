@@ -978,6 +978,28 @@ class UserController extends MainApiController
         return  $this->sendResponse(205,['data'=>[],'message'=>trans('main.Day_Not_Found')]);
 
     }
+
+
+
+    public function getUnFreezeDay(Request $request)
+    {
+        $user = $this->getUser($request);
+        $resume_at = optional($user->CancelDay)->resume_at ;
+        return  $this->sendResponse(200, ['data' => ['resume_at' => $resume_at], 'message' => ""]);
+    }
+    public function updateUnFreezeDay(Request $request)
+    {
+        $today =   date("Y-m-d");
+        $dateEnd = strtotime("+3 day", strtotime($today));
+        $firstEndValidDay=date("Y-m-d",$dateEnd);
+        $validator = Validator::make($request->only(['end_day']), ['end_day' => "nullable|date|after_or_equal:$firstEndValidDay"]);
+        if ($validator->fails()) {
+            return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
+        }
+        $user = $this->getUser($request);
+        $user->CancelDay()->updateOrCreate([] , ['resume_at' => $request->end_day]);
+        return  $this->sendResponse(200, ['data' => ['resume_at' => $request->end_day], 'message' => ""]);
+    }
     public function freezeDay(Request $request)
     {
 
@@ -985,8 +1007,10 @@ class UserController extends MainApiController
            $today=   date("Y-m-d");
            $date = strtotime("+3 day", strtotime($today));
            $firstValidDay=date("Y-m-d",$date);
+           $dateEnd = strtotime("+4 day", strtotime($today));
+           $firstEndValidDay=date("Y-m-d",$dateEnd);
 
-           $validator = Validator::make($request->only(['start_day','end_day']),['start_day' => "required|date|after_or_equal:$firstValidDay"]);
+           $validator = Validator::make($request->only(['start_day','end_day']),['start_day' => "required|date|after_or_equal:$firstValidDay", 'end_day' => "nullable|date|after_or_equal:$firstEndValidDay"]);
             if ($validator->fails()) {
                 return $this->sendResponse(400,['data'=>[],'message'=>$validator->errors()->first()]);
             }
@@ -994,7 +1018,8 @@ class UserController extends MainApiController
 
             $user=$this->getUser($request);
 
-            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
+           $user->CancelDay()->updateOrCreate([] , ['resume_at' => $request->end_day]);
+           $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
 
             if(count($daysId)){
@@ -1069,6 +1094,7 @@ class UserController extends MainApiController
 			}
             */
 
+            $user->CancelDay()->updateOrCreate([] , ['resume_at' => null]);
             foreach($countExistFreeze as $key=>$freezDate){
                 $newDay = date("Y-m-d",strtotime("+$key day", strtotime($firstValidDay)));
                 //check date exist

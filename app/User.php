@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Mail\ForgotPassword;
+use App\Models\CancelFreezeDay;
 use App\Models\CashBack;
 use App\Models\Clinic\Appointment;
 use App\Models\Clinic\Area;
@@ -217,6 +218,11 @@ class User extends Authenticatable
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function CancelDay()
+    {
+        return $this->hasOne(CancelFreezeDay::class,'user_id' );
     }
 
     public function packageDuration()

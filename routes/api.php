@@ -66,6 +66,8 @@ Route::prefix('v3')->namespace('Api\V3')->group(function () {
             Route::post('/setProgress', 'UserController@setProgress');
             Route::post('/saveItem', 'UserController@saveItem');
             Route::post('/chooseRandomFood', 'UserController@chooseRandomFood');
+            Route::get('/unFreezeDay', 'UserController@getUnFreezeDay');
+            Route::post('/unFreezeDay/update', 'UserController@updateUnFreezeDay');
             Route::post('/freezeDay', 'UserController@freezeDay');
             Route::post('/cancelFreezeDay ', 'UserController@cancelFreezeDay');
             Route::post('/requestCashBack', 'UserController@requestCashBack');
@@ -154,6 +156,8 @@ Route::prefix('v2')->namespace('Api\V2')->group(function () {
             Route::post('/setProgress', 'UserController@setProgress');
             Route::post('/saveItem', 'UserController@saveItem');
             Route::post('/chooseRandomFood', 'UserController@chooseRandomFood');
+            Route::get('/unFreezeDay', 'UserController@getUnFreezeDay');
+            Route::post('/unFreezeDay/update', 'UserController@updateUnFreezeDay');
             Route::post('/freezeDay', 'UserController@freezeDay');
             Route::post('/cancelFreezeDay ', 'UserController@cancelFreezeDay');
             Route::post('/requestCashBack', 'UserController@requestCashBack');
@@ -231,6 +235,8 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
             Route::post('/setProgress', 'UserController@setProgress');
             Route::post('/saveItem', 'UserController@saveItem');
             Route::post('/chooseRandomFood', 'UserController@chooseRandomFood');
+            Route::get('/unFreezeDay', 'UserController@getUnFreezeDay');
+            Route::post('/unFreezeDay/update', 'UserController@updateUnFreezeDay');
             Route::post('/freezeDay', 'UserController@freezeDay');
             Route::post('/cancelFreezeDay ', 'UserController@cancelFreezeDay');
             Route::post('/requestCashBack', 'UserController@requestCashBack');

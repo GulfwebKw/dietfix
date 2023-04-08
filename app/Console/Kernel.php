@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Console;
+use App\Console\Commands\AutoCancelFreezeDay;
 use App\Console\Commands\CheckItemStatus;
 use App\Console\Commands\chooseRandomFood;
 use App\Console\Commands\EnablePackage;
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
 	 	 EnableOtherPackage::class,
          NotifyExpirePackageUser::class,
 		 NotifyBirthDayWishUser::class,
+		 AutoCancelFreezeDay::class,
     ];
 
     /**
@@ -37,6 +39,7 @@ class Kernel extends ConsoleKernel
                $schedule->command('chooseRandomFood:client')->everyMinute();
                $schedule->command('enablePackage:client')->dailyAt("23:30");
 			   $schedule->command('enableOtherPackage:client')->dailyAt("23:30");
+			   $schedule->command('freeze:cancel')->dailyAt("03:30");
                $schedule->command('notifyExpirePackageUser:client')->everyMinute();
 			   $schedule->command('notifyBirthdayWishUser:client')->everyMinute();
     }

@@ -147,6 +147,11 @@ class User extends Authenticatable {
         return $this->belongsTo(Country::class,'country_work_id');
     }
 
+    public function CancelDay()
+    {
+        return $this->hasOne(CancelFreezeDay::class,'user_id' );
+    }
+
     public function areaWeekends()
     {
         return $this->belongsTo(Area::class,'area_work_id');
@@ -223,7 +228,7 @@ class User extends Authenticatable {
 	{
 		return $this->belongsTo(Package::class);
 	}
-	
+
 	public function packageone()
     {
         return $this->hasOne(Package::class,'id','package_id');
