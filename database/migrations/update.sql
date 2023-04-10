@@ -16,3 +16,5 @@ INSERT INTO `admin_menu` (`id`, `menuTitleEn`, `menuTitleAr`, `menuLink`, `menuI
 --  ===================================================================
 ALTER TABLE `discounts` ADD `package` INT NULL DEFAULT NULL AFTER `count_limit_user`, ADD `package_duration` INT NULL DEFAULT NULL AFTER `package`;
 CREATE TABLE `cancel_freeze_day` ( `user_id` INT NOT NULL , `resume_at` TIMESTAMP NULL DEFAULT NULL , UNIQUE (`user_id`)) ENGINE = InnoDB;
+ALTER TABLE `cancel_freeze_day` ADD `isFreezed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `resume_at`, ADD `isAutoUnFreezed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `isFreezed`, ADD `freezed_starting_date` TIMESTAMP NULL DEFAULT NULL AFTER `isAutoUnFreezed`;
+ALTER TABLE `cancel_freeze_day` CHANGE `resume_at` `freezed_ending_date` TIMESTAMP NULL DEFAULT NULL;

@@ -10,8 +10,13 @@ class CancelFreezeDay extends Model {
 	protected $primaryKey = 'user_id';
 	public $timestamps = false;
 
-	protected $fillable = array('user_id','resume_at');
-	protected $casts = array('resume_at' => 'datetime');
+	protected $fillable = array('user_id','freezed_ending_date','freezed_starting_date','isFreezed', 'isAutoUnFreezed');
+	protected $casts = array(
+        'freezed_ending_date' => 'datetime',
+        'freezed_starting_date' => 'datetime',
+        'isFreezed' => 'boolean',
+        'isAutoUnFreezed' => 'boolean',
+    );
 
 	public function user(){
 		return $this->belongsTo(User::class);

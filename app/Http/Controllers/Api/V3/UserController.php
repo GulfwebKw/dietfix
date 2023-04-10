@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V3;
 
 use App\Events\Sms;
 use App\Models\App\UserWeekProgress;
+use App\Models\CancelFreezeDay;
 use App\Models\CashBack;
 use App\Models\Clinic\Day;
 use App\Models\Clinic\ItemDays;
@@ -85,7 +86,7 @@ class UserController extends MainApiController
 
         $newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
         $newSubscriptionDate = !empty($newSubscriptionDate) ? date('Y-m-d', strtotime($newSubscriptionDate)) : '';
-        return $this->sendResponse(200, ['data' => ['user' => $user, 'unClaimedGift' => $this->getExisitingGift($user->id), 'remind_day' => $this->getCountRemDaysUser($user->id, $user->membership_start), 'sum_point' => $res[0], 'count_day' => $res[1], 'sum_cash_back' => $res[2], 'subscription_end_date' => $lastDate, 'is_future_subscription' => $is_future_subscription, 'new_starting_date' => $newSubscriptionDate], 'message' => trans("main.login_success")]);
+        return $this->sendResponse(200, ['data' => ['user' => $user, 'unClaimedGift' => $this->getExisitingGift($user->id), 'remind_day' => $this->getCountRemDaysUser($user->id, $user->membership_start), 'sum_point' => $res[0], 'count_day' => $res[1], 'sum_cash_back' => $res[2], 'subscription_end_date' => $lastDate, 'is_future_subscription' => $is_future_subscription, 'new_starting_date' => $newSubscriptionDate, 'freezeInformation' => $user->CancelDay ], 'message' => trans("main.login_success")]);
     }
     /**@param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -120,7 +121,7 @@ class UserController extends MainApiController
         }
         $newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
         $newSubscriptionDate = !empty($newSubscriptionDate) ? date('Y-m-d', strtotime($newSubscriptionDate)) : '';
-        return $this->sendResponse(200, ['data' => ['user' => $user, 'unClaimedGift' => $this->getExisitingGift($user->id), 'remind_day' => $this->getCountRemDaysUser($user->id, $user->membership_start), 'sum_point' => $res[0], 'count_day' => $res[1], 'sum_cash_back' => $res[2], 'subscription_end_date' => $lastDate, 'is_future_subscription' => $is_future_subscription, 'new_starting_date' => $newSubscriptionDate], 'message' => '']);
+        return $this->sendResponse(200, ['data' => ['user' => $user, 'unClaimedGift' => $this->getExisitingGift($user->id), 'remind_day' => $this->getCountRemDaysUser($user->id, $user->membership_start), 'sum_point' => $res[0], 'count_day' => $res[1], 'sum_cash_back' => $res[2], 'subscription_end_date' => $lastDate, 'is_future_subscription' => $is_future_subscription, 'new_starting_date' => $newSubscriptionDate, 'freezeInformation' => $user->CancelDay], 'message' => '']);
     }
     public function register(Request $request)
     {
@@ -959,8 +960,8 @@ class UserController extends MainApiController
     public function getUnFreezeDay(Request $request)
     {
         $user = $this->getUser($request);
-        $resume_at = optional($user->CancelDay)->resume_at ;
-        return  $this->sendResponse(200, ['data' => ['resume_at' => $resume_at], 'message' => ""]);
+        $freezed_ending_date = optional($user->CancelDay)->freezed_ending_date ;
+        return  $this->sendResponse(200, ['data' => ['freezed_ending_date' => $freezed_ending_date], 'message' => ""]);
     }
     public function updateUnFreezeDay(Request $request)
     {
@@ -972,8 +973,11 @@ class UserController extends MainApiController
             return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
         }
         $user = $this->getUser($request);
-        $user->CancelDay()->updateOrCreate([] , ['resume_at' => $request->end_day]);
-        return  $this->sendResponse(200, ['data' => ['resume_at' => $request->end_day], 'message' => ""]);
+        CancelFreezeDay::query()->where('user_id' , $user->id)->update([
+            'freezed_ending_date' => $request->end_day,
+            'isAutoUnFreezed' => $request->end_day != null,
+        ]);
+        return  $this->sendResponse(200, ['data' => ['freezed_ending_date' => $request->end_day], 'message' => ""]);
     }
 
     public function freezeDay(Request $request)
@@ -994,7 +998,12 @@ class UserController extends MainApiController
 
             $user = $this->getUser($request);
 
-            $user->CancelDay()->updateOrCreate([] , ['resume_at' => $request->end_day]);
+            CancelFreezeDay::query()->updateOrCreate(['user_id' => $user->id] , [
+                'freezed_ending_date' => $request->end_day,
+                'isFreezed' => true,
+                'isAutoUnFreezed' => $request->end_day != null,
+                'freezed_starting_date' => $firstValidDay,
+            ]);
             $res = UserDate::where('user_id', $user->id)->where('date', '>=', $user->membership_start)->where('date', '>=', $firstValidDay)->update(['freeze' => 1]);
             $daysId = UserDate::where('user_id', $user->id)->where('date', '>=', $user->membership_start)->where('date', '>=', $firstValidDay)->where('freeze', 1)->pluck('id');
 
@@ -1068,7 +1077,12 @@ class UserController extends MainApiController
 			}
             */
 
-            $user->CancelDay()->updateOrCreate([] , ['resume_at' => null]);
+            CancelFreezeDay::query()->updateOrCreate(['user_id' => $user->id] , [
+                'freezed_ending_date' => null,
+                'isFreezed' => false,
+                'isAutoUnFreezed' => false,
+                'freezed_starting_date' => null,
+            ]);
             foreach ($countExistFreeze as $key => $freezDate) {
                 $newDay = date("Y-m-d", strtotime("+$key day", strtotime($firstValidDay)));
                 //check date exist

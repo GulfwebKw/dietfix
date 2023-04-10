@@ -43,11 +43,11 @@ class AutoCancelFreezeDay extends Command
     public function handle()
     {
         $date = Carbon::now()->addDays(3);
-        $cancelDays = CancelFreezeDay::query()->whereDate('resume_at' , $date)->get();
+        $cancelDays = CancelFreezeDay::query()->whereDate('freezed_ending_date' , $date)->get();
         foreach ($cancelDays as $cancelDay) {
             $user          = $cancelDay->user;
             $userId        = $user->id;
-            $firstValidDay = $cancelDay->resume_at;
+            $firstValidDay = $cancelDay->freezed_ending_date;
 
             //check resume date should not override the available date
             $resumeDay = UserDate::where('user_id', $user->id)->where('freeze', 1)->orderBy('date', 'asc')->first();
@@ -66,7 +66,12 @@ class AutoCancelFreezeDay extends Command
                 continue;
             }
 
-            $user->CancelDay()->updateOrCreate([] , ['resume_at' => null]);
+            CancelFreezeDay::query()->updateOrCreate(['user_id' => $user->id] , [
+                'freezed_ending_date' => null,
+                'isFreezed' => false,
+                'isAutoUnFreezed' => false,
+                'freezed_starting_date' => null,
+            ]);
             foreach ($countExistFreeze as $key => $freezDate) {
                 $newDay = date("Y-m-d", strtotime("+$key day", strtotime($firstValidDay)));
                 //check date exist
