@@ -6,7 +6,7 @@ use App\Models\Base as  Model;
 
 class CancelFreezeDay extends Model {
 
-	protected $table = 'UserMeta.php';
+	protected $table = 'cancel_freeze_day';
 	protected $primaryKey = 'user_id';
 	public $timestamps = false;
 
