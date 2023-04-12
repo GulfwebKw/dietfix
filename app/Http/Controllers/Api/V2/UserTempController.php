@@ -36,23 +36,23 @@ class UserTempController extends MainApiController
     {
         parent::__construct();
     }
-    
+
 	public function getMeals(Request $request)
     {
         if(empty(auth()->user()->id)){
 		return  $this->sendResponse(205,['data'=>[],'message'=>'Please login to access this']);
 		}
-		
+
 		$user = $this->getUser($request);
 		$pendingSubscription = FutureRenewalPackage::where('user_id',auth()->user()->id)->first();
-		
+
 		if(empty($pendingSubscription->id)){
 		return  $this->sendResponse(205,['data'=>[],'message'=>'Future package subscription is not available']);
 		}
-		
+
         $firstDate = self::getLastEndDate(auth()->user()->id);
 		$membership_start = $firstDate;
-	
+
         if(isset($request->day)){
             $date          = $request->day;
             $unixTimestamp = strtotime($date);
@@ -60,7 +60,7 @@ class UserTempController extends MainApiController
             $dayNumber     = intval(date("d", $unixTimestamp));
             $validDayName  = $this->selectWeek($membership_start,$dayOfWeek,$dayNumber);
             $day           = $this->getDayId($validDayName);
-			
+
             if(isset($day)){
                 $dayId=$day->id;
             }else{
@@ -69,8 +69,8 @@ class UserTempController extends MainApiController
         }else{
             $dayId=null;
         }
-		
-		
+
+
 
         $day=UserDateTemp::where('date',$request->day)->where('user_id',$user->id)->first();
 
@@ -83,9 +83,9 @@ class UserTempController extends MainApiController
         }else{
             $packId=$user->package_id;
         }
-		
-	
-        
+
+
+
 		if(empty($packId)){
 		    $packId=$request->package_id;
 		}
@@ -123,10 +123,10 @@ class UserTempController extends MainApiController
         return  $this->sendResponse(200,['data'=>['prefix_photo_addons'=>url(env('APP_URL').'/media/addons/'),'prefix_photo_item'=>url(env('APP_URL').'/media/items/'),'meals'=>$result->meals],'message'=>""]);
 
     }
-	
-	
+
+
 	 private function selectWeek($startingDay,$dayName,$dayNumber){
-  
+
         $now=time();
         $your_date = strtotime($startingDay);
         $daysWeek1=[1,2,3,4,5,6,7,15,16,17,18,19,20,21,29,30,31];
@@ -137,11 +137,11 @@ class UserTempController extends MainApiController
             return $dayName." 2";
         }
     }
-	
+
 	private function getDayId($dayName){
         return  DB::table("days")->where('titleEn',$dayName)->select(['id'])->first();
     }
-	
+
 	//get last ending date
     public static function getLastEndDate($userid){
         $datesInfo = DB::table('user_dates_temp')->where('user_id',$userid)->where('freeze',0)->orderBy('date','asc')->first();
@@ -154,7 +154,7 @@ class UserTempController extends MainApiController
 		}
 		return $lastDate;
      }
-	 
+
 	/**@param Request $request
      * @return \Illuminate\Http\JsonResponse
      * return User Object and return status and message
@@ -172,8 +172,8 @@ class UserTempController extends MainApiController
         }
 
 
-    } 
-	
+    }
+
 	//save item by date
    public function saveItem(Request $request)
     {
@@ -187,7 +187,7 @@ class UserTempController extends MainApiController
             $user  = $this->getUser($request);
             $males = $request->males;
             $day   = UserDateTemp::where('id',$request->day_id)->where('user_id',$user->id)->first();
-			
+
             if(isset($day->package_id)){
                 $packId=$day->package_id;
             }else{
@@ -200,7 +200,7 @@ class UserTempController extends MainApiController
                 $today         = date("Y-m-d");
                 $date          = strtotime("+3 day", strtotime($today));
                 $firstValidDay = date("Y-m-d",$date);
-                /* 
+                /*
                 if($day->date < $firstValidDay){
                     return $this->sendResponse(400,['data'=>[],'message'=>trans('main.not_valid_change_order')]);
 
@@ -211,7 +211,7 @@ class UserTempController extends MainApiController
                 $dayId         = Day::where('titleEn',$dayOfWeek)->first();
 
                 DB::table('orders_temp')->where('user_id',$user->id)->where('date_id',$day->id)->delete();
-				
+
 				$this->logUserActivity("Temp orders added  userId==>".$user->id,null,$user->deviceType);
 
                 foreach ($males as $maleArray) {
@@ -234,11 +234,11 @@ class UserTempController extends MainApiController
 
                                 $order->save();
                                 $orderId=$order->id;
-								
+
                                 $this->logUserActivity("set Temp order for day ".$day->date." userId==>".$user->id,null,$user->deviceType);
 
                                 $this->updateAddons($orderId,$maleArray['addons']);
-								
+
                                 $change=true;
 
                     }
@@ -248,9 +248,9 @@ class UserTempController extends MainApiController
 					$day->update_status='user';
                     $day->save();
                 }
-				
+
                 $itemDay = $this->itemDay($user->id,$day->id);
-				
+
                 return  $this->sendResponse(200,['data'=>['dayItems'=>$itemDay],'message'=>"successful updated or created day items "]);
                 //get day item
             }
@@ -259,7 +259,7 @@ class UserTempController extends MainApiController
         }catch (\Exception $e){
             return $this->sendResponse(500,['data'=>[],'message'=>$e->getMessage()]);
         }
-    } 
+    }
 	//
 	 private function itemDay($userId,$dayId){
        return DB::table('orders_temp')->where('day_id',$dayId)->where('user_id',$userId)->select('*')->get()->toArray();
@@ -271,7 +271,7 @@ class UserTempController extends MainApiController
         $res= DB::table("portion_log")->where("package_id",$packageId)->where('user_id',$userId)->where('meal_id',$mealId)->select(['portion'])->first();
         return optional($res)->portion;
     }
-	
+
 	//
 	private function updateAddons($orderId,$addons)
     {
@@ -285,10 +285,18 @@ class UserTempController extends MainApiController
 	public function getUserDays(Request $request)
     {
         $user=$this->getUser($request);
-		
-        return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id,$user->membership_start)],'message'=>""]);
+        $days = $this->getListUserDays($user->id,$user->membership_start) ;
+        $cancelDay = $user->CancelDay ;
+        if ( $cancelDay->isFreezed and $cancelDay->isAutoUnFreezed ) {
+            $time = $cancelDay->freezed_ending_date->timestamp;
+            foreach ( $days as $i => $day  ){
+                if ( strtotime($day['date']) >= $time )
+                    $days[$i]['freeze'] = "0";
+            }
+        }
+        return  $this->sendResponse(200,['data'=>['user_days'=>$days],'message'=>""]);
     }
-	
+
 	private function getListUserDays($userId,$statingDate=null)
     {
         $res=DB::table('user_dates_temp')->select(['id','date','freeze','isMealSelected'])->where('user_id',$userId);
@@ -297,7 +305,7 @@ class UserTempController extends MainApiController
         }
         return $res->get()->toArray();
     }
-	
+
 	 public function getOrderUser(Request $request)
     {
         $date     = $request->day;
@@ -343,8 +351,8 @@ class UserTempController extends MainApiController
         }
 
     }
-	
-	
+
+
 	 public function setDay(Request $request)
     {
         try{
@@ -366,7 +374,7 @@ class UserTempController extends MainApiController
 			UserDateTemp::where('user_id',$user->id)->where('id',$request->old_day_id)->delete();
 			$this->logUserActivity("Old Temp Date is removed-->".$user->id,null,$user->deviceType);
 			}
-			
+
             return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id),'day_id'=>$userDate->id],'message'=>trans('main.user_date_update_success')]);
 
         }catch (\Exception $e){
@@ -377,8 +385,8 @@ class UserTempController extends MainApiController
 
 
     }
-	
-	
+
+
 	   /////////////////////////////////////////////////////////////////////Imtiaz////////////////////////////////////////////
    public function chooseRandomFoodByDate(Request $request)
     {
@@ -386,13 +394,13 @@ class UserTempController extends MainApiController
         try{
             $user=$this->getUser($request);
             $days=DB::table('user_dates_temp')->where('date','=',$request->day)->where('user_id',$user->id)->where('isMealSelected',0)->where('freeze',0)->select('*')->get();
-			
+
 			$userpkg=DB::table('user_dates_temp')->where('user_id',$user->id)->orderBy('date','asc')->first();
-			
+
             $package=Package::where('id',$userpkg->package_id)->where('show_mobile',1)->where('active',1)->with(['meals'=>function($q){$q->where('active',1);}])->first();
 
-            
-			
+
+
             if(!isset($package) || empty($package)){
                 return  $this->sendResponse(205,['data'=>[],'message'=>trans('main.user_not_subscribe')]);
             }
@@ -538,6 +546,6 @@ class UserTempController extends MainApiController
         }
 
     }
-  	
+
    /////////////////////////////////////////////////////////////////////Imtiaz End///////////////////////////////////////////////
 }

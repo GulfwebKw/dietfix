@@ -80,7 +80,11 @@ class UserController extends MainApiController
 
 		$newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
 		$newSubscriptionDate = !empty($newSubscriptionDate)?date('Y-m-d',strtotime($newSubscriptionDate)):'';
-        return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $user->CancelDay],'message'=>trans("main.login_success")]);
+
+        $cancelDay = $user->CancelDay ;
+        $cancelDay->freezed_ending_date = $cancelDay->freezed_ending_date->format('Y-m-d');
+        $cancelDay->freezed_starting_date = $cancelDay->freezed_starting_date->format('Y-m-d');
+        return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $cancelDay],'message'=>trans("main.login_success")]);
 
     }
     /**@param Request $request
@@ -116,7 +120,10 @@ class UserController extends MainApiController
 		if(!empty($futureRenewInfo->id)){ $is_future_subscription=1;}
 		$newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
 		$newSubscriptionDate = !empty($newSubscriptionDate)?date('Y-m-d',strtotime($newSubscriptionDate)):'';
-        return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $user->CancelDay],'message'=>'']);
+        $cancelDay = $user->CancelDay ;
+        $cancelDay->freezed_ending_date = $cancelDay->freezed_ending_date->format('Y-m-d');
+        $cancelDay->freezed_starting_date = $cancelDay->freezed_starting_date->format('Y-m-d');
+        return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $cancelDay],'message'=>'']);
 
     }
     public function register(Request $request)
@@ -1338,7 +1345,16 @@ class UserController extends MainApiController
     public function getUserDays(Request $request)
     {
         $user=$this->getUser($request);
-        return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id,$user->membership_start)],'message'=>""]);
+        $days = $this->getListUserDays($user->id,$user->membership_start) ;
+        $cancelDay = $user->CancelDay ;
+        if ( $cancelDay->isFreezed and $cancelDay->isAutoUnFreezed ) {
+            $time = $cancelDay->freezed_ending_date->timestamp;
+            foreach ( $days as $i => $day  ){
+                if ( strtotime($day['date']) >= $time )
+                    $days[$i]['freeze'] = "0";
+            }
+        }
+        return  $this->sendResponse(200,['data'=>['user_days'=>$days],'message'=>""]);
     }
     public function getPoints(Request $request)
     {
