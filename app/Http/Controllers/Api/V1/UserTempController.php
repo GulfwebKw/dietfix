@@ -290,8 +290,8 @@ class UserTempController extends MainApiController
         if ( $cancelDay->isFreezed and $cancelDay->isAutoUnFreezed ) {
             $time = $cancelDay->freezed_ending_date->timestamp;
             foreach ( $days as $i => $day  ){
-                if ( strtotime($day['date']) >= $time )
-                    $days[$i]['freeze'] = "0";
+                if ( strtotime($day->date) >= $time )
+                    $days[$i]->freeze = "0";
             }
         }
         return  $this->sendResponse(200,['data'=>['user_days'=>$days],'message'=>""]);
