@@ -82,7 +82,7 @@ class UserController extends MainApiController
 		$newSubscriptionDate = !empty($newSubscriptionDate)?date('Y-m-d',strtotime($newSubscriptionDate)):'';
 
         $cancelDayObject = $user->CancelDay ;
-        $cancelDay = $cancelDayObject->toArray() ;
+        $cancelDay = optional($cancelDayObject)->toArray() ;
         $cancelDay['freezed_ending_date'] = $cancelDayObject->freezed_ending_date == null ? null : $cancelDayObject->freezed_ending_date->format('Y-m-d');
         $cancelDay['freezed_starting_date'] = $cancelDayObject->freezed_starting_date == null ? null : $cancelDayObject->freezed_starting_date->format('Y-m-d');
         return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $cancelDay],'message'=>trans("main.login_success")]);
@@ -122,7 +122,7 @@ class UserController extends MainApiController
 		$newSubscriptionDate = $this->getValidRenewPackageRequestDate($user->id);
 		$newSubscriptionDate = !empty($newSubscriptionDate)?date('Y-m-d',strtotime($newSubscriptionDate)):'';
         $cancelDayObject = $user->CancelDay ;
-        $cancelDay = $cancelDayObject->toArray() ;
+        $cancelDay = optional($cancelDayObject)->toArray() ;
         $cancelDay['freezed_ending_date'] = $cancelDayObject->freezed_ending_date == null ? null : $cancelDayObject->freezed_ending_date->format('Y-m-d');
         $cancelDay['freezed_starting_date'] = $cancelDayObject->freezed_starting_date == null ? null : $cancelDayObject->freezed_starting_date->format('Y-m-d');
         return $this->sendResponse(200,['data'=>['user'=>$user,'remind_day'=>$this->getCountRemDaysUser($user->id,$user->membership_start),'sum_point'=>$res[0],'count_day'=>$res[1],'sum_cash_back'=>$res[2],'subscription_end_date'=>$lastDate,'is_future_subscription'=>$is_future_subscription,'new_starting_date'=>$newSubscriptionDate, 'freezeInformation' => $cancelDay],'message'=>'']);
