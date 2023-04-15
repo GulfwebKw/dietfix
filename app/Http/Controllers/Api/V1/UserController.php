@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\MainApiController;
 use App\Models\Clinic\Package;
 use App\Models\ReferralUser;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -892,6 +893,28 @@ class UserController extends MainApiController
             return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
         }
         $user = $this->getUser($request);
+        $cancelDay = optional($user->CancelDay) ;
+        if ( $cancelDay->isAutoUnFreezed and $cancelDay->freezed_ending_date->lt( Carbon::createFromFormat('Y-m-d', $request->end_day) ) ) {
+            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->whereDate('date','>=',$cancelDay->freezed_ending_date)
+                ->where('date','<=',$request->end_day)
+                ->update(['freeze'=>1]);
+            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->where('date','<=',$request->end_day)
+                ->whereDate('date','>=',$cancelDay->freezed_ending_date)->where('freeze',1)->pluck('id');
+
+            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
+        } else {
+            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->whereDate('date','<=',$cancelDay->freezed_ending_date)
+                ->where('date','>=',$request->end_day)
+                ->update(['freeze'=>1]);
+            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->where('date','>=',$request->end_day)
+                ->whereDate('date','<=',$cancelDay->freezed_ending_date)->where('freeze',1)->pluck('id');
+
+            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
+        }
         CancelFreezeDay::query()->where('user_id' , $user->id)->update([
             'freezed_ending_date' => $request->end_day,
             'isAutoUnFreezed' => $request->end_day != null,
