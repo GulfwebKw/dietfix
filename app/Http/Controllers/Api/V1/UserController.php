@@ -940,8 +940,15 @@ class UserController extends MainApiController
                 'isAutoUnFreezed' => $request->end_day != null,
                 'freezed_starting_date' => $firstValidDay,
             ]);
-            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
-            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
+            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->where('date','>=',$firstValidDay)
+                ->when($request->end_day != null , function ($query ) use($request) {
+                    return $query->where('date','<=',$request->end_day);
+                })->update(['freeze'=>1]);
+            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->when($request->end_day != null , function ($query ) use($request) {
+                    return $query->where('date','<=',$request->end_day);
+                })->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
 
             if(count($daysId)){
                 $this->logUserActivity("freeze days  userId==>".$user->id,$daysId,$user->deviceType);
@@ -1007,20 +1014,26 @@ class UserController extends MainApiController
 
 
             for ($i=0;$i<$countExistFreeze;$i++){
+                $i2 = 0 ;
+                do {
+                    $addDay = $i2 + $i ;
+                    $newDay = date("Y-m-d", strtotime("+$addDay day", strtotime($firstValidDay)));
+                    //check date exist
+                    $i2++;
+                    $existDay = UserDate::where('date', $newDay)->where('user_id', $user->id)->first();
+                } while ( ! empty($existDay->id) and $existDay->freeze == 1 );
                     $c=$i;
-                    $newDay= date("Y-m-d",strtotime("+$c day", strtotime($firstValidDay)));
-                    $existDay=UserDate::where('user_id',$user->id)->where('date',$newDay)->first();
-                    if(isset($existDay)){
-                        $existDay->freeze=0;
-                        $existDay->isMealSelected=0;
-                        $existDay->save();
-                        $this->logUserActivity("update day status and  cancel freeze after cancelFreeze day   date==>".$existDay->date."  userId==>".$user->id,null,$user->deviceType);
+                if(isset($existDay)){
+                    $existDay->freeze=0;
+                    $existDay->isMealSelected=0;
+                    $existDay->save();
+                    $this->logUserActivity("update day status and  cancel freeze after cancelFreeze day   date==>".$existDay->date."  userId==>".$user->id,null,$user->deviceType);
 
-                    }else{
-                        UserDate::create(['user_id'=>$user->id,'date'=>$newDay]);
-                        $this->logUserActivity("create new day after cancelFreeze day   date==>".$newDay." userId==>".$user->id,null,$user->deviceType);
+                }else{
+                    UserDate::create(['user_id'=>$user->id,'date'=>$newDay]);
+                    $this->logUserActivity("create new day after cancelFreeze day   date==>".$newDay." userId==>".$user->id,null,$user->deviceType);
 
-                    }
+                }
             }
                 return  $this->sendResponse(200,['data'=>['user_days'=>$this->getListUserDays($user->id,$user->membership_start)],'message'=>trans('main.User date update successfully completed')]);
 

@@ -1037,8 +1037,14 @@ class UserController extends MainApiController
                 'isAutoUnFreezed' => $request->end_day != null,
                 'freezed_starting_date' => $firstValidDay,
             ]);
-           $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
-            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
+           $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+               ->when($request->end_day != null , function ($query ) use($request) {
+                   return $query->where('date','<=',$request->end_day);
+               })->where('date','>=',$firstValidDay)->update(['freeze'=>1]);
+            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->when($request->end_day != null , function ($query ) use($request) {
+                    return $query->where('date','<=',$request->end_day);
+                })->where('date','>=',$firstValidDay)->where('freeze',1)->pluck('id');
 
             if(count($daysId)){
                 $this->logUserActivity("App:freeze days  userId==>".$user->id,$daysId,$user->deviceType);
@@ -1119,10 +1125,14 @@ class UserController extends MainApiController
                 'freezed_starting_date' => null,
             ]);
             foreach($countExistFreeze as $key=>$freezDate){
-                $newDay = date("Y-m-d",strtotime("+$key day", strtotime($firstValidDay)));
-                //check date exist
-
-                $existDayE = UserDate::where('date',$newDay)->where('user_id',$userId)->first();
+                $i = 0 ;
+                do {
+                    $addDay = $i + $key ;
+                    $newDay = date("Y-m-d", strtotime("+$addDay day", strtotime($firstValidDay)));
+                    //check date exist
+                    $i++;
+                    $existDayE = UserDate::where('date', $newDay)->where('user_id', $userId)->first();
+                } while ( ! empty($existDayE->id) and $existDayE->freeze == 1 );
                 if(!empty($existDayE->id)){
                 $existDayE->freeze         = 0;
                 if(!empty($this->isOrderExist($existDayE->id,$userId))){
