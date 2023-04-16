@@ -1024,19 +1024,19 @@ class UserController extends MainApiController
             Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
         } elseif ( $cancelDay->isAutoUnFreezed == false ) {
             $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
-                ->where('date','>=',$request->end_day)
+                ->where('date','>',$request->end_day)
                 ->update(['freeze'=>0]);
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
-                ->where('date','>=',$request->end_day)
+                ->where('date','>',$request->end_day)
                 ->where('freeze',0)->pluck('id');
             Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>0]);
         } else {
             $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
                 ->whereDate('date','<=',$cancelDay->freezed_ending_date)
-                ->where('date','>=',$request->end_day)
+                ->where('date','>',$request->end_day)
                 ->update(['freeze'=>0]);
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
-                ->where('date','>=',$request->end_day)
+                ->where('date','>',$request->end_day)
                 ->whereDate('date','<=',$cancelDay->freezed_ending_date)->where('freeze',0)->pluck('id');
 
             Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>0]);
