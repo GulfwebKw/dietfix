@@ -1384,7 +1384,7 @@ class UserController extends MainApiController
     {
         $user=$this->getUser($request);
         $days = $this->getListUserDays($user->id,$user->membership_start) ;
-        $cancelDay = $user->CancelDay ;
+        $cancelDay = optional($user->CancelDay) ;
         if ( $cancelDay->isFreezed and $cancelDay->isAutoUnFreezed ) {
             $time = $cancelDay->freezed_ending_date->timestamp;
             foreach ( $days as $i => $day  ){
