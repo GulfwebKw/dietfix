@@ -1003,17 +1003,17 @@ class UserController extends MainApiController
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
                 ->where('date','>=',$request->end_day)
                 ->where('freeze',0)->pluck('id');
-            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
+            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>0]);
         } else {
             $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
                 ->whereDate('date','<=',$cancelDay->freezed_ending_date)
                 ->where('date','>=',$request->end_day)
-                ->update(['freeze'=>1]);
+                ->update(['freeze'=>0]);
             $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
                 ->where('date','>=',$request->end_day)
-                ->whereDate('date','<=',$cancelDay->freezed_ending_date)->where('freeze',1)->pluck('id');
+                ->whereDate('date','<=',$cancelDay->freezed_ending_date)->where('freeze',0)->pluck('id');
 
-            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
+            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>0]);
         }
         CancelFreezeDay::query()->where('user_id' , $user->id)->update([
             'freezed_ending_date' => $request->end_day,
