@@ -286,14 +286,6 @@ class UserTempController extends MainApiController
     {
         $user=$this->getUser($request);
         $days = $this->getListUserDays($user->id,$user->membership_start) ;
-        $cancelDay = optional($user->CancelDay) ;
-        if ( $cancelDay->isFreezed and $cancelDay->isAutoUnFreezed ) {
-            $time = $cancelDay->freezed_ending_date->timestamp;
-            foreach ( $days as $i => $day  ){
-                if ( strtotime($day->date) >= $time )
-                    $days[$i]->freeze = "0";
-            }
-        }
         return  $this->sendResponse(200,['data'=>['user_days'=>$days],'message'=>""]);
     }
 
