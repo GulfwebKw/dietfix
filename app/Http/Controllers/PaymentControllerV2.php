@@ -283,15 +283,16 @@ class PaymentControllerV2 extends MainController
 
             $user = $this->getUser($request);
 
-            $validator = Validator::make($request->all(), ['starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate", 'delivery_type' => 'nullable|exists:delivery_type,id']);
-            if ($validator->fails()) {
-                return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
-            }
 
             $today     = date('Y-m-d');
             //$date      = strtotime("+3 day",strtotime($today));
             $firstDate = date('Y-m-d', strtotime($today . ' + 3 days'));
             //dd($firstDate);
+
+            $validator = Validator::make($request->all(), ['starting_date' => "required|date|date_format:Y-m-d|after_or_equal:$firstDate", 'delivery_type' => 'nullable|exists:delivery_type,id']);
+            if ($validator->fails()) {
+                return $this->sendResponse(400, ['data' => [], 'message' => $validator->errors()->first()]);
+            }
 
             if (isset($request->wallet)) {
                 $wallet = intval($request->wallet);
