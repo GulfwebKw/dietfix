@@ -1012,7 +1012,14 @@ class UserController extends MainApiController
         }
         $user = $this->getUser($request);
         $cancelDay = optional($user->CancelDay) ;
-        if ( $cancelDay->isAutoUnFreezed and $cancelDay->freezed_ending_date->lt( Carbon::createFromFormat('Y-m-d', $request->end_day) ) ) {
+        if ( $cancelDay->isAutoUnFreezed and  $request->end_day == null ) {
+            $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->whereDate('date','>=',$cancelDay->freezed_ending_date)
+                ->update(['freeze'=>1]);
+            $daysId= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
+                ->whereDate('date','>=',$cancelDay->freezed_ending_date)->where('freeze',1)->pluck('id');
+            Order::whereIn('date_id',$daysId)->where('user_id',$user->id)->update(['freeze'=>1]);
+        } elseif ( $cancelDay->isAutoUnFreezed and $cancelDay->freezed_ending_date->lt( Carbon::createFromFormat('Y-m-d', $request->end_day) ) ) {
             $res= UserDate::where('user_id',$user->id)->where('date','>=',$user->membership_start)
                 ->whereDate('date','>=',$cancelDay->freezed_ending_date)
                 ->where('date','<=',$request->end_day)
