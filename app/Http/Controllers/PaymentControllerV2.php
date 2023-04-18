@@ -26,24 +26,24 @@ class PaymentControllerV2 extends MainController
 
     //protected $payStatic      = 'https://demo.myfatoorah.com/ie/';
     //TEST
-    protected $username       = 'demoApiuser@myfatoorah.com';
-    protected $password       = 'Mf@12345678';
-    protected $apiPath        = 'https://apidemo.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
-    protected $apiCallBackUrl = 'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/';
-    protected $apiTokenUrl    = 'https://apidemo.myfatoorah.com/Token';
-
-	protected $callBackUrl = 'https://demo.dietfix.com/callBackPayment2';
-    protected $errorUrl    = 'https://demo.dietfix.com/callBackPayment2';
-
-    //LIVE
-//    protected $username = 'ahmadmyfatoorah@gmail.com';
-//    protected $password = 'ahmadmyfatoorah@2019';
-//    protected $apiPath = 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
-//    protected $apiCallBackUrl = 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/';
-//    protected $apiTokenUrl = 'https://apikw.myfatoorah.com/Token';
+//    protected $username       = 'demoApiuser@myfatoorah.com';
+//    protected $password       = 'Mf@12345678';
+//    protected $apiPath        = 'https://apidemo.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
+//    protected $apiCallBackUrl = 'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/';
+//    protected $apiTokenUrl    = 'https://apidemo.myfatoorah.com/Token';
 //
-//    protected $callBackUrl = 'https://dietfix.com/callBackPayment2';
-//    protected $errorUrl    = 'https://dietfix.com/callBackPayment2';
+//	protected $callBackUrl = 'https://demo.dietfix.com/callBackPayment2';
+//    protected $errorUrl    = 'https://demo.dietfix.com/callBackPayment2';
+
+//    LIVE
+    protected $username = 'ahmadmyfatoorah@gmail.com';
+    protected $password = 'ahmadmyfatoorah@2019';
+    protected $apiPath = 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso';
+    protected $apiCallBackUrl = 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/';
+    protected $apiTokenUrl = 'https://apikw.myfatoorah.com/Token';
+
+    protected $callBackUrl = 'https://dietfix.com/callBackPayment2';
+    protected $errorUrl    = 'https://dietfix.com/callBackPayment2';
 
 
     public function getToken()
