@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Input;
 class AdminUsersAdminController extends AdminController
 {
 
-
+    public $validation;
 
     public function __construct()
     {
@@ -116,6 +116,7 @@ class AdminUsersAdminController extends AdminController
     public function store(Request $request)
     {
         // Filter Clinic On Save
+        $this->validation = null ;
         if (Input::get($this->_pk)) {
             $current_clinic = Clinic::find(Auth::user()->clinic_id);
             $modifing_user = User::find(Input::get($this->_pk));
@@ -123,6 +124,10 @@ class AdminUsersAdminController extends AdminController
             // Filter Clinic On Grid
             if($current_clinic->can_see_others == 0 && Auth::user()->clinic_id != $modifing_user->clinic_id)
                 return Redirect::to(ADMIN_FOLDER);
+        } else {
+            $this->validation = ($this->model)::$rules['default'] ;
+            unset($this->validation['mobile_number'] , $this->validation['delivery_type']);
+            $request->merge(['isAdmin' => 1 ]);
         }
         return parent::store($request);
     }

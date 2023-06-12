@@ -8,6 +8,7 @@ use App\Models\Admin\AdminMessage;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -278,11 +279,12 @@ class AdminController extends Controller
 
 
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -296,7 +298,7 @@ class AdminController extends Controller
 
 
             // Update
-            $validator = Validator::make(Input::all(), (isset($M::$rules['update'])) ? $M::$rules['update'] : $M::$rules);
+            $validator = Validator::make(Input::all(), (isset($this->validation) and $this->validation != null ) ? $this->validation : ((isset($M::$rules['update'])) ? $M::$rules['update'] : $M::$rules));
             $id = Input::get($this->_pk);
 
             if (!$id || !is_numeric($id))
@@ -314,7 +316,7 @@ class AdminController extends Controller
         } else {
 
             // New
-            $validator = Validator::make(Input::all(), (isset($M::$rules['default'])) ? $M::$rules['default'] : $M::$rules);
+            $validator = Validator::make(Input::all(), (isset($this->validation) and $this->validation != null ) ? $this->validation : (( isset($M::$rules['default'])) ? $M::$rules['default'] : $M::$rules) );
             $this->item = new $M;
 
 
