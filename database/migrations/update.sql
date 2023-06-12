@@ -7,14 +7,13 @@ INSERT INTO `admin_menu` (`id`, `menuTitleEn`, `menuTitleAr`, `menuLink`, `menuI
 
 INSERT INTO `settings` (`id`, `key`, `value`, `help`) VALUES (NULL, 'printLabelProduction', '1', ''), (NULL, 'printLabelExpiry', '15', '');
 
-
 INSERT INTO `admin_menu` (`id`, `menuTitleEn`, `menuTitleAr`, `menuLink`, `menuIco`, `menu_id`, `ordering`, `visible`) VALUES (NULL, 'Not Active Users', 'العملاء', 'users/notActive', 'user', '0', '150', '1');
 
-
-
-
---  ===================================================================
 ALTER TABLE `discounts` ADD `package` INT NULL DEFAULT NULL AFTER `count_limit_user`, ADD `package_duration` INT NULL DEFAULT NULL AFTER `package`;
 CREATE TABLE `cancel_freeze_day` ( `user_id` INT NOT NULL , `resume_at` TIMESTAMP NULL DEFAULT NULL , UNIQUE (`user_id`)) ENGINE = InnoDB;
 ALTER TABLE `cancel_freeze_day` ADD `isFreezed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `resume_at`, ADD `isAutoUnFreezed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `isFreezed`, ADD `freezed_starting_date` TIMESTAMP NULL DEFAULT NULL AFTER `isAutoUnFreezed`;
 ALTER TABLE `cancel_freeze_day` CHANGE `resume_at` `freezed_ending_date` TIMESTAMP NULL DEFAULT NULL;
+
+
+--  ===================================================================
+ALTER TABLE `users` ADD `lastDeviceCode` VARCHAR(65) NULL DEFAULT NULL AFTER `dob`;

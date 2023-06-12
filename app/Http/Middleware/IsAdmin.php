@@ -16,7 +16,7 @@ class IsAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user() &&  Auth::user()->isAdmin==1) {
+        if (Auth::user() &&  Auth::user()->isAdmin==1 and $request->cookie('adminLastDeviceCode') == Auth::user()->lastDeviceCode ) {
             return $next($request);
         }
         return redirect('/admin/process/login');

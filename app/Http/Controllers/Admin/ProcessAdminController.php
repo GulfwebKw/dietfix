@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
+use function GuzzleHttp\Psr7\str;
 
 class ProcessAdminController extends AdminController
 {
@@ -159,7 +160,7 @@ class ProcessAdminController extends AdminController
     public function login()
     {
 
-        if (Auth::user() && Auth::user()->isAdmin == 1)
+        if (Auth::user() && Auth::user()->isAdmin == 1 and \request()->cookie('adminLastDeviceCode') == Auth::user()->lastDeviceCode)
 
             return Redirect::to('/'.ADMIN_FOLDER.'/');
 
@@ -177,8 +178,11 @@ class ProcessAdminController extends AdminController
 
 
         if (Auth::attempt(array('username' => Input::get('username'), 'password' => Input::get('password'), 'active' => 1,'isAdmin' => 1),Input::get('remember'))){
-
-            return Redirect::to('/'.env('ADMIN_FOLDER').'/'.$uri);
+            $user = \auth()->user();
+            $user->lastDeviceCode = \Str::uuid();
+            $user->save();
+            $cookie = cookie()->forever('adminLastDeviceCode',  $user->lastDeviceCode);
+            return Redirect::to('/'.env('ADMIN_FOLDER').'/'.$uri)->cookie($cookie);
         } else
             return View::make('admin.login')->with('messages', array(trans('main.Wrong Password or Username, Please check your form submission, and ty again')))->with('_pageTitle', trans('main.Login'));
     }

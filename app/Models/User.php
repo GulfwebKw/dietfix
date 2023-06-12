@@ -53,6 +53,7 @@ class User extends Authenticatable {
 		'bmi',
 		'address',
 		'standard_menu_id',
+		'lastDeviceCode',
 		);
 
 	public static $rules = array(
