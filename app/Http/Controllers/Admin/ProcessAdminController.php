@@ -160,7 +160,7 @@ class ProcessAdminController extends AdminController
     public function login()
     {
 
-        if (Auth::user() && Auth::user()->isAdmin == 1 and \request()->cookie('adminLastDeviceCode') == Auth::user()->lastDeviceCode)
+        if (Auth::user() && Auth::user()->isAdmin == 1)
 
             return Redirect::to('/'.ADMIN_FOLDER.'/');
 
@@ -178,8 +178,8 @@ class ProcessAdminController extends AdminController
 
 
         if (Auth::attempt(array('username' => Input::get('username'), 'password' => Input::get('password'), 'active' => 1,'isAdmin' => 1),Input::get('remember'))){
-            $user = \auth()->user();
-            $user->lastDeviceCode = \Str::uuid();
+            Auth::logoutOtherDevices(Input::get('password'));
+            return Redirect::to('/'.env('ADMIN_FOLDER').'/'.$uri);
             $user->save();
             $cookie = cookie()->forever('adminLastDeviceCode',  $user->lastDeviceCode);
             return Redirect::to('/'.env('ADMIN_FOLDER').'/'.$uri)->cookie($cookie);

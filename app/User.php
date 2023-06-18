@@ -66,7 +66,6 @@ class User extends Authenticatable
         'standard_menu_id',
         'delivery_type',
         'autoapprove_menus',
-        'lastDeviceCode',
     );
 
     public static $rules = array(
