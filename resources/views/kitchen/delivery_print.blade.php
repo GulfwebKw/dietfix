@@ -13,6 +13,13 @@
             margin-right: 2px;
             margin-top:1px;
         }
+        table {
+            border-collapse: collapse;
+        }
+
+        tr {
+            border-bottom: 1pt solid black;
+        }
 
     </style>
 
@@ -26,58 +33,66 @@
         {{ trans('main.No Results') }}
     </div>
 @else
+    <table class="table table-hover"   style="margin-top:20px; width: 100%;margin-left: 20px; margin-right: 20px;">
+        <tbody>
+        <tr style="font-size: 11px; font-family:Tahoma,Arial, Helvetica, sans-serif; border-bottom: 2pt solid black;">
+            <th class="text-center">{{ trans('main.ID') }}</th>
+            <th class="text-center">{{ trans('main.Username') }}</th>
+            <th class="text-center">{{ trans('main.Phone') }}</th>
+            <th class="text-center">{{ trans('main.Address') }}</th>
+        </tr>
     @foreach ($orders->users as $province)
         @foreach ($province as $area)
             @foreach ($area as $user)
-                <table class="table table-hover"   style="height:310px;margin-bottom:10px">
-                    <tbody>
-                    <tr style="font-size: 11px; font-family:Tahoma,Arial, Helvetica, sans-serif;">
-                        <th class="text-center">{{ trans('main.ID') }}</th>
-                        <th class="text-center">{{ trans('main.Username') }}</th>
-                        <th class="text-center">{{ trans('main.Phone') }}</th>
-                        <th class="text-center">{{ trans('main.Address') }}</th>
-                    </tr>
-                    <tr style="font-size: 11px; font-family:Tahoma,Arial, Helvetica, sans-serif;">
-                        <td class="text-center">
+                    <tr style="font-size: 11px; font-family:Tahoma,Arial, Helvetica, sans-serif; border-bottom: 1pt solid black;">
+                        <td class="text-center" style="padding-top:5px;padding-bottom:5px; border-bottom: 1pt solid black;">
                             {{ $user->id }}
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="padding-top:5px;padding-bottom:5px; border-bottom: 1pt solid black;">
                             {{ $user->username }}
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="padding-top:5px;padding-bottom:5px; border-bottom: 1pt solid black;">
                             {{ $user->mobile_number }}
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="padding-top:5px;padding-bottom:5px; border-bottom: 1pt solid black;">
                             @if($weekEndAddress)
-                                {{ optional($user->countryWeekends)->{'title'.LANG} }}<br>
-                                {{ optional($user->provinceWeekends)->{'title'.LANG} }}<br>
-                                {{ optional($user->areaWeekends)->{'title'.LANG} }}<br>,
-                                Block:{{ $user->block_work }}<br>
-                                Street:{{ $user->street_work }}<br>
-                                Avenue:{{ $user->avenue_work }}<br>
-                                HouseNumber:{{ $user->house_number_work }}<br>
-                                Floor:{{ $user->floor_work }}<br>
-                                Address:{{ $user->address_work }}
+                                @php
+                                    echo implode(', ', array_filter([
+                                        optional($user->countryWeekends)->{'title'.LANG} ,
+                                        optional($user->provinceWeekends)->{'title'.LANG} ,
+                                        optional($user->areaWeekends)->{'title'.LANG} ,
+                                        $user->block_work ? 'Block: '.$user->block_work : null ,
+                                        $user->street_work ? 'Street: '.$user->street_work : null ,
+                                        $user->avenue_work ? 'Avenue: '.$user->avenue_work : null ,
+                                        $user->house_number_work ? 'HouseNumber: '.$user->house_number_work : null ,
+                                        $user->floor_work ? 'Floor: '.$user->floor_work : null ,
+                                        $user->address_work ? 'Address: '.$user->address_work : null ,
+]));
+                                @endphp
                             @else
-                                {{ $user->country->{'title'.LANG} }}<br>
-                                {{ $user->province->{'title'.LANG} }}<br>
-                                {{ $user->area->{'title'.LANG} }}<br>
-                                Block:{{ $user->block }}<br>
-                                Street:{{ $user->street }}<br>
-                                Avenue:{{ $user->avenue }}<br>
-                                HouseNumber:{{ $user->house_number }}<br>
-                                Floor:{{ $user->floor }}<br>
-                                Address:{{ $user->address }}
+                                @php
+                                    echo implode(', ', array_filter([
+                                        optional($user->country)->{'title'.LANG} ,
+                                        optional($user->province)->{'title'.LANG} ,
+                                        optional($user->area)->{'title'.LANG} ,
+                                        $user->block ? 'Block: '.$user->block : null ,
+                                        $user->street ? 'Street: '.$user->street : null ,
+                                        $user->avenue ? 'Avenue: '.$user->avenue : null ,
+                                        $user->house_number ? 'HouseNumber: '.$user->house_number : null ,
+                                        $user->floor ? 'Floor: '.$user->floor : null ,
+                                        $user->address ? 'Address: '.$user->address : null ,
+]));
+                                @endphp
                             @endif
 
                         </td>
                     </tr>
-                </tbody>
-            </table>
-            <div class="page-break"></div>
             @endforeach
         @endforeach
     @endforeach
+        </tbody>
+    </table>
+    {{--            <div class="page-break"></div>--}}
 @endif
 
 </body>

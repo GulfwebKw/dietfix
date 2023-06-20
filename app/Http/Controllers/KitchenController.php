@@ -187,7 +187,7 @@ class KitchenController extends MainController
 
         if ( \request()->get('download' , false ) ) {
             $pdf=\PDF2::loadView('kitchen.delivery_print',array("orders"=>$orders,'weekEndAddress'=>$weekEndAddress));
-            $pdf->setPaper(array(0,0,281,350), 'landscape');
+            $pdf->setPaper('a4', 'potrait');
             return $pdf->stream('delivery.pdf');
         }
 
