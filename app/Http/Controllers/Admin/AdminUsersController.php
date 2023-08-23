@@ -638,10 +638,13 @@ class AdminUsersController extends AdminController
         $userDate=UserDate::where('date',$date)->where('user_id',$id)->first();
         $order=Order::where('date_id',$userDate->id)->delete();
         UserDate::where('date',$date)->where('user_id',$id)->delete();
-        $date2=date("Y-m-d",strtotime("+1 day",strtotime($lastDay->date)));
-        UserDate::create(['date'=>$date2,'user_id'=>$id]);
-        $this->makeAdminLog("remove day $date for user   ===>$id , and create  new day   $date2",null,$id,'remove and create day');
-
+        if ( ! request()->query('notInsert' , false) ) {
+            $date2 = date("Y-m-d", strtotime("+1 day", strtotime($lastDay->date)));
+            UserDate::create(['date' => $date2, 'user_id' => $id]);
+            $this->makeAdminLog("remove day $date for user   ===>$id , and create  new day   $date2", null, $id, 'remove and create day');
+        } else {
+            $this->makeAdminLog("remove day $date for user   ===>$id", null, $id, 'remove day');
+        }
         return response()->json(['success'=>true]);
 
     }

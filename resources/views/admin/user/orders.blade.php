@@ -56,7 +56,8 @@
                         <h3>
                             <button  @if($day->date<$firstValidDay) disabled  style="background: #9d261d;color: white"  @endif  @if($day->isMealSelected==1) style="background:#28a745;color: white" @else style="background-color:#17a2b8; color: white" @endif   data-day="{{ $day->id }}" data-date="{{$day->date}}" data-package="{{ $user->package_id }}" data-user="{{ $user->id }}" type="button" class="btn   showdate">{{ date('l', strtotime( $day->date))}} - {{ $day->date }} </button>
                         </h3>
-                       <a href="#"><i class="fa fa-remove remove_day" data-date="{{$day->date}}" data-user="{{$user->id}}"  style="color: red">Delete</i></a>
+                       <a style="margin-right: 12px;margin-left: 12px;" href="#"><i class="fa fa-remove remove_day" data-date="{{$day->date}}" data-user="{{$user->id}}"  data-showdate="{{ date('l', strtotime( $day->date))}} - {{ $day->date }}" style="color: red; margin-right: 2px;margin-left: 2px;">Delete</i></a>
+                       <a style="margin-right: 12px;margin-left: 12px;" href="#"><i class="fa fa-trash permanent_remove_day" data-date="{{$day->date}}" data-user="{{$user->id}}"   data-showdate="{{ date('l', strtotime( $day->date))}} - {{ $day->date }}" style="color: red; margin-right: 2px;margin-left: 2px;">Permanent Delete</i></a>
 
                 </div>
             @endforeach
@@ -87,7 +88,51 @@
 @section('custom_foot')
     @parent
 
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"  onclick="forceCloseModal()"></button>
+                    <h3 id="myModalLabel">Are you sure?</h3>
+                </div>
+                <div class="modal-body">
+                    <p>You want to disable <span id="dateToDelete"></span> and do not add any new date!</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="forceCloseModal()">Close</button>
+                    <button class="btn" style="color: white;text-shadow: none;background-color: #4d90fe;" onclick="forceUncheck()">Delete with out new date</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        var idOFunCheck1 = null;
+        var idOFunCheck2 = null;
+        function forceUncheck() {
+            $.ajax({
+                type: "GET",
+                url:  '{{ url($menuUrl.'/cancelSingleDays')}}'+"/"+ idOFunCheck2 +"/"+ idOFunCheck1 +'?notInsert=true',
+                data: "",
+                dataType: "json",
+                contentType: false,
+                cache: false,
+                processData:false,
+                success: function(msg){
+                    location.reload();
+                },
+                error: function(msg){
+                    alert("Error found !!!");
+                }
+            });
+            forceCloseModal();
+        }
+        function forceCloseModal(){
+            $('body').removeClass('modal-open');
+            $('#deleteModal').modal('hide');
+        }
+
         jQuery(document).ready(function($) {
             $(".blue").remove();
             $(".green").remove();
@@ -173,6 +218,12 @@
                         }
                     });
                 }
+            });
+            $(".permanent_remove_day").on("click",function () {
+                $('#dateToDelete').html($(this).attr('data-showdate'));
+                idOFunCheck1 = $(this).attr('data-date');
+                idOFunCheck2 = $(this).attr('data-user');
+                $('#deleteModal').modal('show');
             });
             $("#add_day").on("click",function () {
                 var i= $("#count_day").val();
