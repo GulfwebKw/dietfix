@@ -54,6 +54,9 @@
                 @php $addOnItem[$order->id][]=$addon->{'title'.LANG}; @endphp
             @endforeach
         @endif
+        @if(optional($order->user)->note)
+            <p>Note : {!! nl2br(optional($order->user)->note) !!}</p>
+        @endif
     </div>
 @endforeach
 

@@ -84,6 +84,15 @@
                             <td style="font-size:8px;" colspan="1" align="left">{{ !empty($order->item->calories)?$order->item->calories:'-' }}</td>
                         </tr>
                     @endforeach
+
+                    @if(optional($user['user'])->note)
+                    <tr style="font-size: 10px;font-family:Tahoma,Arial, Helvetica, sans-serif;">
+                        <th colspan="10" style="font-size: 10px">
+                            Note : {!! nl2br(optional($user['user'])->note) !!}
+                        </th>
+                    </tr>
+                    @endif
+
                     </tbody>
 
                 </table>
