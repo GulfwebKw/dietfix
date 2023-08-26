@@ -36,13 +36,11 @@
         <br>
         Expiry : {{ date('Y-m-d' , strtotime(Input::get('date') . ' +'.$expireDay.' days ') )  }}
 
-        <br>
         @if( $showIdOnPrint )
-        <p>
+            <br>
             {!!  optional($order->user)->salt
                ."<br>".' ID:'.$order->user->id
             !!}
-       </p>
         @endif
         @if(!$order->addons->isEmpty())
             @php $addOnItem[$order->id]=[]; @endphp
@@ -55,16 +53,11 @@
             @endforeach
         @endif
         @if(optional($order->user)->note)
-            <p>Note : {!! nl2br(optional($order->user)->note) !!}</p>
+            <br>
+            Note : {!! strip_tags(str_replace(['<br />' , '<br>'] , ' - ', nl2br(optional($order->user)->note))) !!}
         @endif
     </div>
 @endforeach
 
 </body>
 </html>
-
-
-
-
-
-
