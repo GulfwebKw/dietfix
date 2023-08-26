@@ -57,7 +57,6 @@
 						<th>{{ trans('main.ID') }}</th>
 						<th>{{ trans('main.Meal') }}</th>
 						<th>{{ trans('main.Portion') }}</th>
-						<th>{{ trans('main.Notes') }}</th>
 						<th>{{ trans('main.Salt') }}</th>
 					</tr>
 						@foreach ($meal['orders'] as $order)
@@ -65,16 +64,22 @@
 							<td>{{ $order->user->id }}</td>
 							<td>{{ $order->category->{'title'.LANG} }} {{ $order->item->{'title'.LANG} }}</td>
 							<td>{{ ($order->portion) ? $order->portion->{'title'.LANG} : 1 }}</td>
-							<td>
-								@if (!$order->addons->isEmpty())
-									@foreach ($order->addons as $addon)
-										{{ $addon->{'title'.LANG} }}
-									@endforeach
-								@endif
-							</td>
 							<td>{{ $order->user->salt }}</td>
 						</tr>
 						@endforeach
+                        <tr>
+                            <th colspan="5">
+                                {{ trans('main.Notes') }}:
+                                @foreach ($meal['orders'] as $order)
+                                    @if (!$order->addons->isEmpty())
+                                        <br>#{{ $order->user->id }}:
+                                        @foreach ($order->addons as $addon)
+                                           {{ $addon->{'title'.LANG} }} @if( ! $loop->last) - @endif
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                            </th>
+                        </tr>
 					@endforeach
 			</tbody>
 				@endif
