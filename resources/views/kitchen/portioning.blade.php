@@ -71,6 +71,7 @@
                                         {{ $addon->{'title'.LANG} }}
                                     @endforeach
                                 @endif
+                                {{ $order->user->note }}
                             </td>
                             <td>{{ $order->user->salt }}</td>
                         </tr>
