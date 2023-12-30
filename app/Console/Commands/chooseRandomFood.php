@@ -58,13 +58,13 @@ class chooseRandomFood extends Command
 
         foreach ($dates as $dayItem){
 		    $validDay = $dayItem->date;
-			
+
             $saved=false;
             $unixTimestamp = strtotime($validDay);
             $dayOfWeek = date("l", $unixTimestamp);
             $dayNumber = date("d", $unixTimestamp);
             if(isset($dayItem->user) ){
-                
+
                 if(isset($dayItem->user->package_id)  ){
                     $validDayName=$this->selectWeek($dayItem->user->membership_start,$dayOfWeek,$dayNumber);
 
@@ -78,7 +78,7 @@ class chooseRandomFood extends Command
                     $day      = $this->getDayId($validDayName);
                     $mainDay  = $this->getDayId($dayOfWeek);
                     $userDate = UserDate::find($dayItem->id);
-					
+
                     $cats=Package::with(["categories"=>function($r){
                         $r->where('active',1);
                     }])->whereId($packId)->first();
@@ -110,8 +110,8 @@ class chooseRandomFood extends Command
                             if(isset($res) && !empty($res)){
 
 								Log::info("Most Order Item assigned - ID".$res->item_id.'--'.$res->most_order);
-								
-								
+
+
 								$order = Order::where('user_id',$dayItem->user->id)
 								                ->where('day_id',$mainDay->id)
 												->where('meal_id',$meal->id)
@@ -119,16 +119,16 @@ class chooseRandomFood extends Command
 												//->where('item_id',$res->item_id)
 												->where('date_id',$dayItem->id)
 												->first();
-												
+
 								if(empty($order->id)){
 								$order = new Order;
 								Log::info("New Order issue -1");
 								}
-								
+
 
 								Log::info("Cron: Random selection - user_id=".$dayItem->user->id."-day_id=".$mainDay->id."-meal_id=".$meal->id."-category_id=".$res->category_id."-item_id=".$res->item_id."-date_id=".$dayItem->id);
-									
-								
+
+
                                 $order->approved   = 1;
                                 $order->day_id     = $mainDay->id;
                                 $order->user_id    = $dayItem->user->id;
@@ -166,9 +166,9 @@ class chooseRandomFood extends Command
                                     ->first(); //
 
                                 if(isset($res)){
-                                    
+
                                     Log::info("Most Order Item assigned - ID".$res->item_id.'--'.$res->most_order);
-                                    
+
 
 									$order = Order::where('user_id',$dayItem->user->id)
 								                ->where('day_id',$mainDay->id)
@@ -177,16 +177,16 @@ class chooseRandomFood extends Command
 												//->where('item_id',$res->item_id)
 												->where('date_id',$dayItem->id)
 												->first();
-												
+
 									if(empty($order->id)){
 									$order = new Order;
 									Log::info("New Order issue -1");
 									}
-									
-									
-								    
+
+
+
 									Log::info("Duplicate Order issue -2 user_id=".$dayItem->user->id."-day_id=".$mainDay->id."-meal_id=".$meal->id."-category_id=".$res->category_id."-item_id=".$res->item_id."-date_id=".$dayItem->id);
-									
+
                                     $order->approved=1;
                                     $order->day_id=$mainDay->id;
                                     $order->user_id=$dayItem->user->id;
@@ -199,7 +199,7 @@ class chooseRandomFood extends Command
                                     $order->portion_id=$portion;
                                     }
                                     $order->save();
-                               
+
                                     $userDate->isMealSelected=1;
                                     $userDate->update_status='auto';
                                     $userDate->created_at=date("Y-m-d H:i:s");
@@ -235,7 +235,7 @@ class chooseRandomFood extends Command
     public function getValidDay()
     {
         $today         = date("Y-m-d");
-        $date          = strtotime("+3 day", strtotime($today));
+        $date          = strtotime("+2 day", strtotime($today));
         $firstValidDay = date("Y-m-d",$date);
         return $firstValidDay;
     }
